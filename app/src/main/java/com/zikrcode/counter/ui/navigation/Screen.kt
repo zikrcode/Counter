@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.navigation
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
+sealed class Screen(val route: String) {
 
-interface CounterRepository {
+    data object CounterHomeScreen: Screen("counter_home_screen")
 
-    fun counterById(id: Int): Flow<Counter>
+    data object CounterListScreen: Screen("counter_list_screen")
 
-    fun allCounters(): Flow<List<Counter>>
+    data object CounterSettingsScreen: Screen("counter_settings_screen")
 
-    suspend fun insertCounter(counter: Counter)
-
-    suspend fun deleteCounter(counter: Counter)
+    data object AddEditCounterScreen : Screen("add_edit_counter_screen")
 }

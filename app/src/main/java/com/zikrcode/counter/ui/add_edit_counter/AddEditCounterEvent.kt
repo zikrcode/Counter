@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.add_edit_counter
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
+sealed class AddEditCounterEvent {
 
-interface CounterRepository {
+    data class EnteredName(val value: String) : AddEditCounterEvent()
 
-    fun counterById(id: Int): Flow<Counter>
+    data class EnteredDescription(val value: String) : AddEditCounterEvent()
 
-    fun allCounters(): Flow<List<Counter>>
+    data class EnteredValue(val value: Int?) : AddEditCounterEvent()
 
-    suspend fun insertCounter(counter: Counter)
+    data object Cancel : AddEditCounterEvent()
 
-    suspend fun deleteCounter(counter: Counter)
+    data object Save : AddEditCounterEvent()
 }

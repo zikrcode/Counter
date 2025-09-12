@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.counter_settings
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
+import android.app.Activity
+import android.view.WindowManager
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 
-interface CounterRepository {
-
-    fun counterById(id: Int): Flow<Counter>
-
-    fun allCounters(): Flow<List<Counter>>
-
-    suspend fun insertCounter(counter: Counter)
-
-    suspend fun deleteCounter(counter: Counter)
+@Composable
+fun ChangeScreenVisibility(keepScreenOn: Boolean) {
+    val activity = LocalContext.current as Activity
+    activity.window.apply {
+        if (keepScreenOn) {
+            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
 }

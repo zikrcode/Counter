@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.counter_list
 
 import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
+import com.zikrcode.counter.domain.utils.CounterOrder
 
-interface CounterRepository {
+sealed class CounterListEvent {
 
-    fun counterById(id: Int): Flow<Counter>
+    data object ToggleOrderSection : CounterListEvent()
 
-    fun allCounters(): Flow<List<Counter>>
+    data class Order(val counterOrder: CounterOrder) : CounterListEvent()
 
-    suspend fun insertCounter(counter: Counter)
+    data class DeleteCounter(val counter: Counter) : CounterListEvent()
 
-    suspend fun deleteCounter(counter: Counter)
+    data object RestoreCounter : CounterListEvent()
+
+    data object FinishDeleteCounter : CounterListEvent()
+
+    data object UserMessageShown : CounterListEvent()
 }

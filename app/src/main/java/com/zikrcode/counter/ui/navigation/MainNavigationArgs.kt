@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.navigation
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
-
-interface CounterRepository {
-
-    fun counterById(id: Int): Flow<Counter>
-
-    fun allCounters(): Flow<List<Counter>>
-
-    suspend fun insertCounter(counter: Counter)
-
-    suspend fun deleteCounter(counter: Counter)
+object MainNavigationArgs {
+    const val EDIT_COUNTER_ARG = "editCounter"
+    const val COUNTER_ID_ARG = "counterId"
 }

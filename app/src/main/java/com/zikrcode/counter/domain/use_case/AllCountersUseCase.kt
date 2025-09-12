@@ -16,8 +16,8 @@
 
 package com.zikrcode.counter.domain.use_case
 
-import com.zikrcode.counter.data.model.Counter
 import com.zikrcode.counter.data.repository.CounterRepository
+import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.domain.utils.CounterOrder
 import com.zikrcode.counter.domain.utils.OrderType
 import kotlinx.coroutines.flow.Flow

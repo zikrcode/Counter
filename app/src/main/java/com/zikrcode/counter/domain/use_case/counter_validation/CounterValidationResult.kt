@@ -16,7 +16,7 @@
 
 package com.zikrcode.counter.domain.use_case.counter_validation
 
-import com.zikrcode.counter.presentation.utils.UiText
+import com.zikrcode.counter.ui.utils.UiText
 
 data class CounterValidationResult(
     val successful: Boolean,

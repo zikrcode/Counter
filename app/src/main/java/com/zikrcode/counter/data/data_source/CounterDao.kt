@@ -21,7 +21,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.zikrcode.counter.data.model.Counter
+import com.zikrcode.counter.domain.model.Counter
 import kotlinx.coroutines.flow.Flow
 
 @Dao

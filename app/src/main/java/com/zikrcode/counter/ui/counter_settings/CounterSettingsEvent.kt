@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.counter_settings
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
+sealed class CounterSettingsEvent {
 
-interface CounterRepository {
-
-    fun counterById(id: Int): Flow<Counter>
-
-    fun allCounters(): Flow<List<Counter>>
-
-    suspend fun insertCounter(counter: Counter)
-
-    suspend fun deleteCounter(counter: Counter)
+    data class PreferenceChanged(val key: String) : CounterSettingsEvent()
 }

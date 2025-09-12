@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.counter_settings
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
-
-interface CounterRepository {
-
-    fun counterById(id: Int): Flow<Counter>
-
-    fun allCounters(): Flow<List<Counter>>
-
-    suspend fun insertCounter(counter: Counter)
-
-    suspend fun deleteCounter(counter: Counter)
+object PreferencesKey {
+    const val VIBRATE_PREF_KEY = "vibrate"
+    const val KEEP_SCREEN_ON_PREF_KEY = "keep_screen_on"
 }

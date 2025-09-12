@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.utils
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
+import androidx.compose.ui.graphics.painter.Painter
 
-interface CounterRepository {
-
-    fun counterById(id: Int): Flow<Counter>
-
-    fun allCounters(): Flow<List<Counter>>
-
-    suspend fun insertCounter(counter: Counter)
-
-    suspend fun deleteCounter(counter: Counter)
-}
+data class BottomNavigationItem(
+    val route: String,
+    val title: String,
+    val selectedIcon: Painter,
+    val unselectedIcon: Painter
+)

@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.data.repository
+package com.zikrcode.counter.ui.counter_home
 
-import com.zikrcode.counter.domain.model.Counter
-import kotlinx.coroutines.flow.Flow
+sealed class CounterHomeEvent {
 
-interface CounterRepository {
+    data object Reset : CounterHomeEvent()
 
-    fun counterById(id: Int): Flow<Counter>
+    data object Increment : CounterHomeEvent()
 
-    fun allCounters(): Flow<List<Counter>>
-
-    suspend fun insertCounter(counter: Counter)
-
-    suspend fun deleteCounter(counter: Counter)
+    data object Decrement : CounterHomeEvent()
 }

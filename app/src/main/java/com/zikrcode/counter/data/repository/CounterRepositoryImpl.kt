@@ -17,7 +17,7 @@
 package com.zikrcode.counter.data.repository
 
 import com.zikrcode.counter.data.data_source.CounterDao
-import com.zikrcode.counter.data.model.Counter
+import com.zikrcode.counter.domain.model.Counter
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

@@ -16,7 +16,7 @@
 
 package com.zikrcode.counter.utils
 
-import com.zikrcode.counter.data.model.Counter
+import com.zikrcode.counter.domain.model.Counter
 
 val testCounters = listOf(
     Counter(

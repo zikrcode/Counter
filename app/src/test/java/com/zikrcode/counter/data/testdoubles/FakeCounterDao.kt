@@ -17,7 +17,7 @@
 package com.zikrcode.counter.data.testdoubles
 
 import com.zikrcode.counter.data.data_source.CounterDao
-import com.zikrcode.counter.data.model.Counter
+import com.zikrcode.counter.domain.model.Counter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
