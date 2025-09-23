@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.counter_settings
 
-import com.zikrcode.counter.ui.utils.UiText
+import android.app.Activity
+import android.view.WindowManager
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+@Composable
+fun ChangeScreenVisibility(keepScreenOn: Boolean) {
+    val activity = LocalContext.current as Activity
+    if (keepScreenOn) {
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    } else {
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+}

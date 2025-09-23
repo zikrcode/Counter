@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.counter_home
 
-import com.zikrcode.counter.ui.utils.UiText
+import com.zikrcode.counter.domain.model.Counter
 
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+sealed class CounterHomeEvent {
+
+    data class Edit(val counter: Counter) : CounterHomeEvent()
+
+    object Reset : CounterHomeEvent()
+
+    object Increment : CounterHomeEvent()
+
+    object Decrement : CounterHomeEvent()
+}

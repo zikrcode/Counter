@@ -20,7 +20,7 @@ import com.zikrcode.counter.R
 import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.domain.repository.CounterRepository
 import com.zikrcode.counter.domain.use_case.counter_validation.CounterValidationResult
-import com.zikrcode.counter.presentation.utils.UiText
+import com.zikrcode.counter.ui.utils.UiText
 
 class InsertCounterUseCase(
     private val counterRepository: CounterRepository

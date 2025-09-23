@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.counter_settings
 
-import com.zikrcode.counter.ui.utils.UiText
-
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+object PreferencesKey {
+    const val VIBRATE_PREF_KEY = "vibrate"
+    const val KEEP_SCREEN_ON_PREF_KEY = "keep_screen_on"
+}
