@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.add_edit_counter
 
-import com.zikrcode.counter.ui.utils.UiText
+sealed class AddEditCounterEvent {
 
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+    data class EnteredName(val value: String) : AddEditCounterEvent()
+
+    data class EnteredValue(val value: String) : AddEditCounterEvent()
+
+    data class EnteredDescription(val value: String) : AddEditCounterEvent()
+
+    object GoBack : AddEditCounterEvent()
+
+    object Cancel : AddEditCounterEvent()
+
+    object Save : AddEditCounterEvent()
+}

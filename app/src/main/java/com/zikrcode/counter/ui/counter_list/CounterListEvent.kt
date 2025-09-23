@@ -14,11 +14,24 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.counter_list
 
-import com.zikrcode.counter.ui.utils.UiText
+import com.zikrcode.counter.domain.model.Counter
+import com.zikrcode.counter.domain.utils.CounterOrder
 
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+sealed class CounterListEvent {
+
+    object ToggleOrderSection : CounterListEvent()
+
+    data class Order(val counterOrder: CounterOrder) : CounterListEvent()
+
+    data class SelectCounter(val counter: Counter) : CounterListEvent()
+
+    data class Delete(val counter: Counter) : CounterListEvent()
+
+    data class Edit(val counter: Counter) : CounterListEvent()
+
+    object NewCounter : CounterListEvent()
+
+    object RestoreCounter : CounterListEvent()
+}

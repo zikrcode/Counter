@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.utils.navigation
 
-import com.zikrcode.counter.ui.utils.UiText
-
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+object MainNavigationArgs {
+    const val TITLE_ARG = "title"
+    const val COUNTER_ID_ARG = "counterId"
+}

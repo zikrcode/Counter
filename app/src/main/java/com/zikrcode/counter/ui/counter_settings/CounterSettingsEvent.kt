@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.counter_settings
 
-import com.zikrcode.counter.ui.utils.UiText
+sealed class CounterSettingsEvent {
 
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+    data class PreferenceChanged(val key: String) : CounterSettingsEvent()
+}

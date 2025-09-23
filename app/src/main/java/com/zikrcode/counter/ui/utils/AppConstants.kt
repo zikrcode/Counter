@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.utils
 
-import com.zikrcode.counter.ui.utils.UiText
-
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+object AppConstants {
+    val COUNTER_VALUE_RANGE = 0 .. 9999999
+    const val MAX_COUNTER_VALUE_LENGTH = 7
+    const val LAST_USED_COUNTER_ID_KEY = "last_used_counter_id"
+    const val VIBRATION_DURATION = 10L
+}

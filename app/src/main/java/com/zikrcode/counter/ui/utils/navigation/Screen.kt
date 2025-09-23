@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.domain.use_case.counter_validation
+package com.zikrcode.counter.ui.utils.navigation
 
-import com.zikrcode.counter.ui.utils.UiText
+sealed class Screen(val route: String) {
 
-data class CounterValidationResult(
-    val successful: Boolean,
-    val errorMessage: UiText? = null
-)
+    object CounterHomeScreen: Screen("counter_home_screen")
+
+    object CounterListScreen: Screen("counter_list_screen")
+
+    object CounterSettingsScreen: Screen("counter_settings_screen")
+
+    object AddEditCounterScreen : Screen("add_edit_counter_screen")
+}
