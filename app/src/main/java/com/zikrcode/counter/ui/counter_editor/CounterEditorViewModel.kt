@@ -24,7 +24,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.domain.use_case.CounterUseCases
-import com.zikrcode.counter.ui.navigation.CounterEditor
+import com.zikrcode.counter.ui.navigation.AppRoute
 import com.zikrcode.counter.ui.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,7 +39,7 @@ class CounterEditorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val args: CounterEditor = savedStateHandle.toRoute()
+    private val args: AppRoute.CounterEditor = savedStateHandle.toRoute()
     private var counterId: Int? = args.counterId
 
     private val _counterName = mutableStateOf("")
