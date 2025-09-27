@@ -43,13 +43,18 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.zikrcode.counter.R
 import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.navigation.CounterHome
+import com.zikrcode.counter.ui.navigation.CounterList
+import com.zikrcode.counter.ui.navigation.CounterSettings
+import com.zikrcode.counter.ui.navigation.MainNavigation
 import com.zikrcode.counter.ui.utils.BottomNavigationItem
-import com.zikrcode.counter.ui.utils.navigation.MainNavigationGraph
-import com.zikrcode.counter.ui.utils.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -128,7 +133,7 @@ fun MainActivityContent() {
             BottomNavigationBar(navController)
         }
     ) {
-        MainNavigationGraph(
+        MainNavigation(
             navController = navController,
             modifier = Modifier
                 .fillMaxSize()
@@ -141,62 +146,56 @@ fun MainActivityContent() {
 private fun BottomNavigationBar(navController: NavController) {
     val bottomNavigationItems = listOf(
         BottomNavigationItem(
-            route = Screen.CounterHomeScreen.route,
+            route = CounterHome,
             title = stringResource(R.string.counter_home),
             selectedIcon = painterResource(R.drawable.ic_counter_filled),
             unselectedIcon = painterResource(R.drawable.ic_counter_outlined),
         ),
         BottomNavigationItem(
-            route = Screen.CounterListScreen.route,
+            route = CounterList,
             title = stringResource(R.string.counter_list),
             selectedIcon = painterResource(R.drawable.ic_featured_filled),
             unselectedIcon = painterResource(R.drawable.ic_featured_outlined),
         ),
         BottomNavigationItem(
-            route = Screen.CounterSettingsScreen.route,
+            route = CounterSettings,
             title = stringResource(R.string.counter_settings),
             selectedIcon = painterResource(R.drawable.ic_settings_filled),
             unselectedIcon = painterResource(R.drawable.ic_settings_outlined),
         )
     )
 
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
-    val bottomBarDestination = bottomNavigationItems.any { currentRoute?.contains(it.route) ?: false }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
-    if (bottomBarDestination) {
-        NavigationBar {
-            bottomNavigationItems.forEach { bottomNavigationItem ->
-                val isSelected = currentRoute?.contains(bottomNavigationItem.route) ?: false
-                NavigationBarItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (currentRoute != bottomNavigationItem.route) {
-                            navController.navigate(bottomNavigationItem.route) {
-                                navController.graph.startDestinationRoute?.let { route ->
-                                    popUpTo(route) {
-                                        saveState = true
-                                    }
-                                }
-                                restoreState = true
-                            }
+    // TODO make sure it is not visible when CounterEditor screen is shown
+    NavigationBar {
+        bottomNavigationItems.forEach { item ->
+            val isSelected = currentDestination?.hierarchy?.any { destination ->
+                destination.hasRoute(item.route::class)
+            } ?: false
+
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = {
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
-                    },
-                    icon = {
-                        Icon(
-                            painter = if (isSelected) {
-                                bottomNavigationItem.selectedIcon
-                            } else {
-                                bottomNavigationItem.unselectedIcon
-                            },
-                            contentDescription = bottomNavigationItem.title
-                        )
-                    },
-                    label = {
-                        Text(text = bottomNavigationItem.title)
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                )
-            }
+                },
+                icon = {
+                    Icon(
+                        painter = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                        contentDescription = item.title
+                    )
+                },
+                label = {
+                    Text(text = item.title)
+                }
+            )
         }
     }
 }

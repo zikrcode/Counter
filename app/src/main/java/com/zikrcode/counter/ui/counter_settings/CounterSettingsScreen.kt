@@ -29,14 +29,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.zikrcode.counter.R
 import com.zikrcode.counter.ui.counter_settings.components.PreferenceItem
 import com.zikrcode.counter.ui.utils.Dimens
 
 @Composable
 fun CounterSettingsScreen(
-    navController: NavController,
     viewModel: CounterSettingsViewModel = hiltViewModel()
 ) {
     CounterSettingsContent(

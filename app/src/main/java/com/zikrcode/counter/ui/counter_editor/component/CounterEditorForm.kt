@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.add_edit_counter.component
+package com.zikrcode.counter.ui.counter_editor.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

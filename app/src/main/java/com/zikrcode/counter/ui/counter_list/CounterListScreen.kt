@@ -40,18 +40,16 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.zikrcode.counter.R
 import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.ui.counter_list.component.CounterGridItem
 import com.zikrcode.counter.ui.utils.Dimens
-import com.zikrcode.counter.ui.utils.navigation.Screen
-import com.zikrcode.counter.ui.utils.navigation.MainNavigationArgs
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CounterListScreen(
-    navController: NavController,
+    onCounterClick: () -> Unit,
+    onEditCounterClick: (Int?) -> Unit,
     viewModel: CounterListViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -66,21 +64,13 @@ fun CounterListScreen(
                     )
                 }
                 is CounterListViewModel.UiEvent.CounterSelected -> {
-                    navController.navigate(Screen.CounterHomeScreen.route) {
-                        popUpTo(Screen.CounterHomeScreen.route) {
-                            saveState = true
-                        }
-                        restoreState = true
-                    }
+                    onCounterClick.invoke()
                 }
                 is CounterListViewModel.UiEvent.EditCounter -> {
-                    navController.navigate(
-                        Screen.AddEditCounterScreen.route +
-                                "?${MainNavigationArgs.COUNTER_ID_ARG}=${event.counter.id}"
-                    )
+                    onEditCounterClick.invoke(event.counter.id)
                 }
                 CounterListViewModel.UiEvent.CreateNewCounter -> {
-                    navController.navigate(Screen.AddEditCounterScreen.route)
+                    onEditCounterClick.invoke(null)
                 }
             }
         }
