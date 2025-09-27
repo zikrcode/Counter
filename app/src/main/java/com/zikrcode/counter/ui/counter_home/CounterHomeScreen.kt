@@ -31,12 +31,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.zikrcode.counter.R
 import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.ui.counter_home.components.CircleButton
 import com.zikrcode.counter.ui.counter_home.components.CounterItem
@@ -44,19 +41,16 @@ import com.zikrcode.counter.ui.counter_home.components.DecrementButton
 import com.zikrcode.counter.ui.counter_home.components.NoCounterAvailable
 import com.zikrcode.counter.ui.counter_settings.ChangeScreenVisibility
 import com.zikrcode.counter.ui.utils.Dimens
-import com.zikrcode.counter.ui.utils.navigation.Screen
-import com.zikrcode.counter.ui.utils.navigation.MainNavigationArgs
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CounterHomeScreen(
-    navController: NavController,
+    onEditCounterClick: (Int?) -> Unit,
     viewModel: CounterHomeViewModel = hiltViewModel()
 ) {
     var noCounter by rememberSaveable {
         mutableStateOf(false)
     }
-    val editCounterTitle = stringResource(R.string.edit_counter)
 
     LaunchedEffect(true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -65,10 +59,7 @@ fun CounterHomeScreen(
                     noCounter = true
                 }
                 is CounterHomeViewModel.UiEvent.EditCounter -> {
-                    navController.navigate(
-                        Screen.AddEditCounterScreen.route +
-                                "?${MainNavigationArgs.TITLE_ARG}=${editCounterTitle}&${MainNavigationArgs.COUNTER_ID_ARG}=${event.counter.id}"
-                    )
+                    onEditCounterClick.invoke(event.counter.id)
                 }
             }
         }

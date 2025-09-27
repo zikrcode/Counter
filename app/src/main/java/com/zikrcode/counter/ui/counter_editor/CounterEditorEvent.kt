@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.add_edit_counter
+package com.zikrcode.counter.ui.counter_editor
 
-sealed class AddEditCounterEvent {
+sealed class CounterEditorEvent {
 
-    data class EnteredName(val value: String) : AddEditCounterEvent()
+    data class EnteredName(val value: String) : CounterEditorEvent()
 
-    data class EnteredValue(val value: String) : AddEditCounterEvent()
+    data class EnteredValue(val value: String) : CounterEditorEvent()
 
-    data class EnteredDescription(val value: String) : AddEditCounterEvent()
+    data class EnteredDescription(val value: String) : CounterEditorEvent()
 
-    object GoBack : AddEditCounterEvent()
+    object GoBack : CounterEditorEvent()
 
-    object Cancel : AddEditCounterEvent()
+    object Cancel : CounterEditorEvent()
 
-    object Save : AddEditCounterEvent()
+    object Save : CounterEditorEvent()
 }

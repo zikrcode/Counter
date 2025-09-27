@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.add_edit_counter
+package com.zikrcode.counter.ui.counter_editor
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.domain.use_case.CounterUseCases
+import com.zikrcode.counter.ui.navigation.CounterEditor
 import com.zikrcode.counter.ui.utils.UiText
-import com.zikrcode.counter.ui.utils.navigation.MainNavigationArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -33,12 +34,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddEditCounterViewModel @Inject constructor(
+class CounterEditorViewModel @Inject constructor(
     private val counterUseCases: CounterUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var currentCounterId: Int? = null
+    private val args: CounterEditor = savedStateHandle.toRoute()
+    private var counterId: Int? = args.counterId
 
     private val _counterName = mutableStateOf("")
     val counterName: State<String> = _counterName
@@ -53,47 +55,45 @@ class AddEditCounterViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        savedStateHandle.get<Int>(MainNavigationArgs.COUNTER_ID_ARG)?.let { counterId ->
-            if (counterId != -1) {
-                viewModelScope.launch {
-                    counterUseCases.counterByIdUseCase(counterId).first().also { counter ->
-                        currentCounterId = counter.id
-                        _counterName.value = counter.counterName
-                        _counterDescription.value = counter.counterDescription
-                        _counterValue.value = counter.counterSavedValue.toString()
-                    }
+        counterId?.let { id ->
+            viewModelScope.launch {
+                counterUseCases.counterByIdUseCase(id).first().also { counter ->
+                    counterId = counter.id
+                    _counterName.value = counter.counterName
+                    _counterDescription.value = counter.counterDescription
+                    _counterValue.value = counter.counterSavedValue.toString()
                 }
             }
         }
     }
 
-    fun onEvent(addEditCounterEvent: AddEditCounterEvent) {
+    fun onEvent(counterEditorEvent: CounterEditorEvent) {
 
-        when (addEditCounterEvent) {
-            is AddEditCounterEvent.EnteredName -> {
-                _counterName.value = addEditCounterEvent.value
+        when (counterEditorEvent) {
+            is CounterEditorEvent.EnteredName -> {
+                _counterName.value = counterEditorEvent.value
             }
-            is AddEditCounterEvent.EnteredValue -> {
-                _counterValue.value = addEditCounterEvent.value
+            is CounterEditorEvent.EnteredValue -> {
+                _counterValue.value = counterEditorEvent.value
             }
-            is AddEditCounterEvent.EnteredDescription -> {
-                _counterDescription.value = addEditCounterEvent.value
+            is CounterEditorEvent.EnteredDescription -> {
+                _counterDescription.value = counterEditorEvent.value
             }
-            AddEditCounterEvent.GoBack -> {
+            CounterEditorEvent.GoBack -> {
                 viewModelScope.launch {
                     _eventFlow.emit(UiEvent.NavigateBack)
                 }
             }
-            AddEditCounterEvent.Cancel -> {
+            CounterEditorEvent.Cancel -> {
                 viewModelScope.launch {
                     _eventFlow.emit(UiEvent.CounterCanceled)
                 }
             }
-            AddEditCounterEvent.Save -> {
+            CounterEditorEvent.Save -> {
                 viewModelScope.launch {
                     val counterValidationResult = counterUseCases.insertCounterUseCase(
                         Counter(
-                            id = currentCounterId,
+                            id = counterId,
                             counterName = counterName.value,
                             counterDescription = counterDescription.value,
                             counterDate = System.currentTimeMillis(),

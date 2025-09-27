@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.add_edit_counter
+package com.zikrcode.counter.ui.counter_editor
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -42,17 +42,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.zikrcode.counter.R
-import com.zikrcode.counter.ui.add_edit_counter.component.AddEditCounterForm
+import com.zikrcode.counter.ui.counter_editor.component.AddEditCounterForm
 import com.zikrcode.counter.ui.utils.Dimens
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun AddEditCounterScreen(
-    navController: NavController,
-    title: String?,
-    viewModel: AddEditCounterViewModel = hiltViewModel()
+fun CounterEditorScreen(
+    onBackClick: () -> Unit,
+    viewModel: CounterEditorViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -60,15 +58,15 @@ fun AddEditCounterScreen(
     LaunchedEffect(true) {
         viewModel.eventFlow.collectLatest { event ->
             when(event) {
-                is AddEditCounterViewModel.UiEvent.ShowSnackbar -> {
+                is CounterEditorViewModel.UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
                         message = event.message.asString(context)
                     )
                 }
-                AddEditCounterViewModel.UiEvent.NavigateBack,
-                AddEditCounterViewModel.UiEvent.CounterSaved,
-                AddEditCounterViewModel.UiEvent.CounterCanceled -> {
-                    navController.navigateUp()
+                CounterEditorViewModel.UiEvent.NavigateBack,
+                CounterEditorViewModel.UiEvent.CounterSaved,
+                CounterEditorViewModel.UiEvent.CounterCanceled -> {
+                    onBackClick.invoke()
                 }
             }
         }
@@ -76,7 +74,7 @@ fun AddEditCounterScreen(
 
     AddEditCounterContent(
         snackbarHostState = snackbarHostState,
-        title = title,
+        title = null, // TODO pass actual counter title
         counterNameState = viewModel.counterName,
         counterValueState = viewModel.counterValue,
         counterDescriptionState = viewModel.counterDescription,
@@ -108,21 +106,21 @@ private fun AddEditCounterContent(
     counterNameState: State<String>,
     counterValueState: State<String>,
     counterDescriptionState: State<String>,
-    onEventClick: (AddEditCounterEvent) -> Unit
+    onEventClick: (CounterEditorEvent) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.consumeWindowInsets(WindowInsets.systemBars),
         topBar = {
             AddEditCounterTopAppBar(
                 onGoBackClick = {
-                    onEventClick(AddEditCounterEvent.GoBack)
+                    onEventClick(CounterEditorEvent.GoBack)
                 },
                 title = title ?: stringResource(R.string.new_counter),
                 onCancelClick = {
-                    onEventClick(AddEditCounterEvent.Cancel)
+                    onEventClick(CounterEditorEvent.Cancel)
                 },
                 onSaveClick = {
-                    onEventClick(AddEditCounterEvent.Save)
+                    onEventClick(CounterEditorEvent.Save)
                 }
             )
         },
@@ -141,19 +139,19 @@ private fun AddEditCounterContent(
                 counterNameState = counterNameState,
                 onCounterNameChange = { counterName ->
                     onEventClick(
-                        AddEditCounterEvent.EnteredName(counterName)
+                        CounterEditorEvent.EnteredName(counterName)
                     )
                 },
                 counterDescriptionState = counterDescriptionState,
                 onCounterDescriptionChange = { counterDescription ->
                     onEventClick(
-                        AddEditCounterEvent.EnteredDescription(counterDescription)
+                        CounterEditorEvent.EnteredDescription(counterDescription)
                     )
                 },
                 counterValueState = counterValueState,
                 onCounterValueChange = { counterValue ->
                     onEventClick(
-                        AddEditCounterEvent.EnteredValue(counterValue)
+                        CounterEditorEvent.EnteredValue(counterValue)
                     )
                 }
             )
