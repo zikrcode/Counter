@@ -16,45 +16,39 @@
 
 package com.zikrcode.counter.ui
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.zikrcode.counter.R
 import com.zikrcode.counter.ui.common.theme.CounterTheme
-import com.zikrcode.counter.ui.navigation.CounterHome
-import com.zikrcode.counter.ui.navigation.CounterList
-import com.zikrcode.counter.ui.navigation.CounterSettings
+import com.zikrcode.counter.ui.navigation.AppRoute
 import com.zikrcode.counter.ui.navigation.MainNavigation
-import com.zikrcode.counter.ui.utils.BottomNavigationItem
+import com.zikrcode.counter.ui.navigation.NavigationItem
+import com.zikrcode.counter.ui.navigation.navigateToAppRoute
+import com.zikrcode.counter.ui.navigation.toAppRoute
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -64,138 +58,111 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-
         setContent {
             CounterTheme {
-                ConfigureSystemUi()
                 MainActivityContent()
             }
         }
     }
 }
 
-@Composable
-private fun ComponentActivity.ConfigureSystemUi() {
-    val darkTheme = isSystemInDarkTheme()
-    val statusBarColor = MaterialTheme.colorScheme.background.toArgb()
-    val navigationBarColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp).toArgb()
-
-    DisposableEffect(darkTheme) {
-        enableEdgeToEdge(
-            statusBarStyle = when {
-                Build.VERSION.SDK_INT >= 29 -> {
-                    if (!darkTheme) {
-                        SystemBarStyle.light(statusBarColor, statusBarColor)
-                    } else {
-                        SystemBarStyle.dark(statusBarColor)
-                    }
-                }
-                else -> {
-                    SystemBarStyle.auto(statusBarColor, statusBarColor) { darkTheme }
-                }
-            },
-            navigationBarStyle = when {
-                Build.VERSION.SDK_INT >= 29 -> {
-                    if (!darkTheme) {
-                        SystemBarStyle.light(navigationBarColor, navigationBarColor)
-                    } else {
-                        SystemBarStyle.dark(navigationBarColor)
-                    }
-                }
-                else -> {
-                    SystemBarStyle.auto(navigationBarColor, navigationBarColor) { darkTheme }
-                }
-            }
-        )
-        onDispose { }
-    }
-}
-
-@Preview(
-    showSystemUi = true,
-    showBackground = true,
-    device = Devices.PHONE
-)
-@Composable
-fun MainActivityContentPreview() {
-    CounterTheme {
-        MainActivityContent()
-    }
-}
-
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MainActivityContent() {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination?.toAppRoute()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            BottomNavigationBar(navController)
-        }
-    ) {
-        MainNavigation(
-            navController = navController,
+    Scaffold { paddingValues ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
-        )
+                .padding(paddingValues)
+        ) {
+            MainNavigation(navController)
+            currentDestination?.let { destination ->
+                MainToolbar(
+                    currentRoute = destination,
+                    onToolbarItemClick = { route ->
+                        navController.navigateToAppRoute(route)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = -ScreenOffset)
+                )
+            }
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun MainToolbar(
+    currentRoute: AppRoute,
+    onToolbarItemClick: (AppRoute) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val navigationItems = mainToolbarNavigationItems()
+    HorizontalFloatingToolbar(
+        expanded = true,
+        floatingActionButton = {
+            FloatingToolbarDefaults.VibrantFloatingActionButton(
+                onClick = {
+                    onToolbarItemClick.invoke(
+                        AppRoute.CounterEditor(null)
+                    )
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_add),
+                    contentDescription = null
+                )
+            }
+        },
+        modifier = modifier,
+        content = {
+            navigationItems.forEach { item ->
+                val isSelected = currentRoute == item.route
+                IconButton(
+                    onClick = {
+                        onToolbarItemClick.invoke(item.route)
+                    },
+                    colors = IconButtonDefaults.iconButtonColors().copy(
+                        containerColor = if (isSelected) {
+                            MaterialTheme.colorScheme.primaryContainer
+                        } else {
+                            Color.Unspecified
+                        }
+                    )
+                ) {
+                    Icon(
+                        painter = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                        contentDescription = item.label
+                    )
+                }
+            }
+        }
+    )
 }
 
 @Composable
-private fun BottomNavigationBar(navController: NavController) {
-    val bottomNavigationItems = listOf(
-        BottomNavigationItem(
-            route = CounterHome,
-            title = stringResource(R.string.counter_home),
-            selectedIcon = painterResource(R.drawable.ic_counter_filled),
-            unselectedIcon = painterResource(R.drawable.ic_counter_outlined),
-        ),
-        BottomNavigationItem(
-            route = CounterList,
-            title = stringResource(R.string.counter_list),
-            selectedIcon = painterResource(R.drawable.ic_featured_filled),
-            unselectedIcon = painterResource(R.drawable.ic_featured_outlined),
-        ),
-        BottomNavigationItem(
-            route = CounterSettings,
-            title = stringResource(R.string.counter_settings),
-            selectedIcon = painterResource(R.drawable.ic_settings_filled),
-            unselectedIcon = painterResource(R.drawable.ic_settings_outlined),
-        )
+private fun mainToolbarNavigationItems(): List<NavigationItem> = listOf(
+    NavigationItem(
+        route = AppRoute.CounterHome,
+        label = stringResource(R.string.counter_home),
+        selectedIcon = painterResource(R.drawable.ic_counter_filled),
+        unselectedIcon = painterResource(R.drawable.ic_counter_outlined),
+    ),
+    NavigationItem(
+        route = AppRoute.CounterList,
+        label = stringResource(R.string.counter_list),
+        selectedIcon = painterResource(R.drawable.ic_featured_filled),
+        unselectedIcon = painterResource(R.drawable.ic_featured_outlined),
+    ),
+    NavigationItem(
+        route = AppRoute.CounterSettings,
+        label = stringResource(R.string.counter_settings),
+        selectedIcon = painterResource(R.drawable.ic_settings_filled),
+        unselectedIcon = painterResource(R.drawable.ic_settings_outlined),
     )
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
-    // TODO make sure it is not visible when CounterEditor screen is shown
-    NavigationBar {
-        bottomNavigationItems.forEach { item ->
-            val isSelected = currentDestination?.hierarchy?.any { destination ->
-                destination.hasRoute(item.route::class)
-            } ?: false
-
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                icon = {
-                    Icon(
-                        painter = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = item.title
-                    )
-                },
-                label = {
-                    Text(text = item.title)
-                }
-            )
-        }
-    }
-}
+)
