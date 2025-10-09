@@ -16,15 +16,12 @@
 
 package com.zikrcode.counter.ui.counter_home
 
-import com.zikrcode.counter.domain.model.Counter
-
-sealed class CounterHomeEvent {
-
-    data class Edit(val counter: Counter) : CounterHomeEvent()
-
-    object Reset : CounterHomeEvent()
-
-    object Increment : CounterHomeEvent()
-
-    object Decrement : CounterHomeEvent()
+sealed interface CounterHomeEvent {
+    data object Settings : CounterHomeEvent
+    data object List : CounterHomeEvent
+    data object Edit : CounterHomeEvent
+    data object NavigationHandled : CounterHomeEvent
+    data object Reset : CounterHomeEvent
+    data object Increment : CounterHomeEvent
+    data object Decrement : CounterHomeEvent
 }

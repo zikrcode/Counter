@@ -17,117 +17,151 @@
 package com.zikrcode.counter.ui.counter_home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zikrcode.counter.R
 import com.zikrcode.counter.domain.model.Counter
+import com.zikrcode.counter.ui.common.composables.AppIconButton
+import com.zikrcode.counter.ui.common.composables.AppScreenContent
+import com.zikrcode.counter.ui.common.theme.CounterTheme
 import com.zikrcode.counter.ui.counter_home.components.CircleButton
-import com.zikrcode.counter.ui.counter_home.components.CounterItem
-import com.zikrcode.counter.ui.counter_home.components.DecrementButton
+import com.zikrcode.counter.ui.counter_home.components.CounterActionButtons
 import com.zikrcode.counter.ui.counter_home.components.NoCounterAvailable
 import com.zikrcode.counter.ui.counter_settings.ChangeScreenVisibility
-import com.zikrcode.counter.ui.utils.Dimens
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CounterHomeScreen(
-    onEditCounterClick: (Int?) -> Unit,
+    onSettingsClick: () -> Unit,
+    onListClick: () -> Unit,
+    onEditClick: (Int) -> Unit,
     viewModel: CounterHomeViewModel = hiltViewModel()
 ) {
-    var noCounter by rememberSaveable {
-        mutableStateOf(false)
-    }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when(event) {
-                CounterHomeViewModel.UiEvent.NoCounter -> {
-                    noCounter = true
-                }
-                is CounterHomeViewModel.UiEvent.EditCounter -> {
-                    onEditCounterClick.invoke(event.counter.id)
+    LaunchedEffect(uiState.navTarget) {
+        when (uiState.navTarget) {
+            CounterHomeNavTarget.CounterSettings -> {
+                onSettingsClick.invoke()
+            }
+            CounterHomeNavTarget.CounterList -> {
+                onListClick.invoke()
+            }
+            CounterHomeNavTarget.EditCounter -> {
+                uiState.counter?.id?.let {
+                    onEditClick.invoke(it)
                 }
             }
+            CounterHomeNavTarget.Idle -> {
+                // no-op
+            }
         }
+        viewModel.onEvent(CounterHomeEvent.NavigationHandled)
     }
 
-    if (noCounter) {
-        NoCounterAvailable()
-    }
+    CounterHomeScreenContent(
+        isLoading = uiState.isLoading,
+        counter = uiState.counter,
+        vibrateOnTap = uiState.vibrateOnTap,
+        onEvent = viewModel::onEvent
+    )
 
-    viewModel.counter.value?.let {
-        CounterHomeContent(
-            counter = it,
-            vibrate = viewModel.vibrateOnTap.value,
-            onEventClick = viewModel::onEvent
+    // to make preview work it is placed outside CounterHomeScreenContent
+    ChangeScreenVisibility(uiState.keepScreenOn)
+}
+
+@PreviewLightDark
+@Composable
+private fun CounterHomeScreenContentPreview() {
+    CounterTheme {
+        CounterHomeScreenContent(
+            isLoading = false,
+            counter = Counter.instance(),
+            vibrateOnTap = false,
+            onEvent = { }
         )
     }
-
-    ChangeScreenVisibility(viewModel.keepScreenOn.value)
-}
-
-@Preview(
-    showSystemUi = true,
-    showBackground = true,
-    device = Devices.PHONE
-)
-@Composable
-fun CounterHomeContentPreview() {
-    CounterHomeContent(
-        counter = Counter.instance(),
-        vibrate = false,
-        onEventClick = { }
-    )
 }
 
 @Composable
-private fun CounterHomeContent(
-    counter: Counter,
-    vibrate: Boolean,
-    onEventClick: (CounterHomeEvent) -> Unit
+private fun CounterHomeScreenContent(
+    isLoading: Boolean,
+    counter: Counter?,
+    vibrateOnTap: Boolean,
+    onEvent: (CounterHomeEvent) -> Unit
 ) {
-    Surface {
+    AppScreenContent(
+        loading = isLoading,
+        title = counter?.counterName ?: stringResource(R.string.app_name),
+        topBarStartIcon = {
+            AppIconButton(
+                onClick = {
+                    onEvent.invoke(CounterHomeEvent.Settings)
+                },
+                icon = Icons.Outlined.Settings,
+                iconDescription = stringResource(R.string.counter_settings)
+            )
+        },
+        topBarEndIcon = {
+            AppIconButton(
+                onClick = {
+                    onEvent.invoke(CounterHomeEvent.List)
+                },
+                icon = Icons.AutoMirrored.Outlined.FeaturedPlayList,
+                iconDescription = stringResource(R.string.counter_list)
+            )
+        }
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(Dimens.SpacingSingle),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CounterItem(
-                counter = counter,
-                onEditClick = {
-                    onEventClick(CounterHomeEvent.Edit(counter))
-                },
-                onResetClick = {
-                    onEventClick(CounterHomeEvent.Reset)
+            if (counter == null) {
+                NoCounterAvailable()
+            } else {
+                Box(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = counter.counterDescription,
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    CircleButton(
+                        modifier = Modifier.align(Alignment.Center),
+                        vibrate = vibrateOnTap,
+                        currentValue = counter.counterSavedValue,
+                        onClick = {
+                            onEvent.invoke(CounterHomeEvent.Increment)
+                        }
+                    )
                 }
-            )
-            Spacer(Modifier.height(Dimens.SpacingSingle))
-            CircleButton(
-                modifier = Modifier.weight(1f),
-                vibrate = vibrate,
-                currentValue = counter.counterSavedValue
-            ) {
-                onEventClick(CounterHomeEvent.Increment)
-            }
-            Spacer(Modifier.height(Dimens.SpacingSingle))
-            DecrementButton {
-                onEventClick(CounterHomeEvent.Decrement)
+                CounterActionButtons(
+                    onResetClick = {
+                        onEvent.invoke(CounterHomeEvent.Reset)
+                    },
+                    onDecrementClick = {
+                        onEvent(CounterHomeEvent.Decrement)
+                    },
+                    onEditClick = {
+                        onEvent.invoke(CounterHomeEvent.Edit)
+                    }
+                )
             }
         }
     }

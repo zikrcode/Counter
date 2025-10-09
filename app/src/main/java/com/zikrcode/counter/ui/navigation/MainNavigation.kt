@@ -19,9 +19,9 @@ package com.zikrcode.counter.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.zikrcode.counter.ui.counter_editor.CounterEditorScreen
 import com.zikrcode.counter.ui.counter_home.CounterHomeScreen
 import com.zikrcode.counter.ui.counter_list.CounterListScreen
@@ -52,10 +52,8 @@ data class NavigationItem(
 )
 
 @Composable
-fun MainNavigation(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
+fun MainNavigation(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
     val startDestination = AppRoute.CounterHome
 
     NavHost(
@@ -65,7 +63,13 @@ fun MainNavigation(
     ) {
         composable<AppRoute.CounterHome> {
             CounterHomeScreen(
-                onEditCounterClick = { counterId ->
+                onSettingsClick = {
+                    navController.navigateToAppRoute(AppRoute.CounterSettings)
+                },
+                onListClick = {
+                    navController.navigateToAppRoute(AppRoute.CounterList)
+                },
+                onEditClick = { counterId ->
                     navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
                 }
             )

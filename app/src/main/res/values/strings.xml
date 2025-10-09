@@ -24,14 +24,14 @@
     <string name="counter_settings">Settings</string>
 
         <!-- CounterHomeScreen -->
-        <string name="edit_counter">Edit counter</string>
 
             <!-- NoCounterSelected -->
             <string name="no_counter_selected">Please select counter from counter list to continue</string>
 
-            <!-- CounterItem -->
-            <string name="edit">Edit</string>
+            <!-- CounterActionButtons -->
             <string name="reset">Reset</string>
+            <string name="decrement">Decrement</string>
+            <string name="edit">Edit</string>
 
         <!-- CounterListScreen -->
         <string name="add">Add</string>

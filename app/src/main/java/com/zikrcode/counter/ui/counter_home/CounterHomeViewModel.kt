@@ -16,8 +16,6 @@
 
 package com.zikrcode.counter.ui.counter_home
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.ViewModel
@@ -28,51 +26,61 @@ import com.zikrcode.counter.ui.counter_settings.PreferencesKey
 import com.zikrcode.counter.ui.utils.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class CounterHomeUiState(
+    val isLoading: Boolean = false,
+    val counter: Counter? = null,
+    val keepScreenOn: Boolean = false,
+    val vibrateOnTap: Boolean = false,
+    val navTarget: CounterHomeNavTarget = CounterHomeNavTarget.Idle
+)
+
+sealed interface CounterHomeNavTarget {
+    data object EditCounter : CounterHomeNavTarget
+    data object CounterSettings : CounterHomeNavTarget
+    data object CounterList : CounterHomeNavTarget
+    data object Idle : CounterHomeNavTarget
+}
+
 @HiltViewModel
 class CounterHomeViewModel @Inject constructor(
-    private val counterUseCases: CounterUseCases,
+    private val counterUseCases: CounterUseCases
 ) : ViewModel() {
 
-    private val _keepScreenOn = mutableStateOf(false)
-    val keepScreenOn: State<Boolean> = _keepScreenOn
-
-    private val _counter = mutableStateOf<Counter?>(null)
-    val counter: State<Counter?> = _counter
-
-    private val _vibrateOnTap = mutableStateOf(false)
-    val vibrateOnTap: State<Boolean> = _vibrateOnTap
+    private val _uiState = MutableStateFlow(CounterHomeUiState())
+    val uiState = _uiState.asStateFlow()
 
     private var saveCounterJob: Job? = null
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
-
     init {
-        loadCounter()
-        loadPreferences()
-
-        viewModelScope.launch {
-            _keepScreenOn.value = counterUseCases.readUserPreferenceUseCase(
-                booleanPreferencesKey(PreferencesKey.KEEP_SCREEN_ON_PREF_KEY)
-            ).first() ?: false
-        }
+        collectCounter()
+        collectPreferences()
     }
 
-    private fun loadCounter() {
+    private fun collectCounter() {
+        _uiState.update { state ->
+            state.copy(isLoading = true)
+        }
+
         var counterJob: Job? = null
 
         fun changeCounter(id: Int) {
             counterJob?.cancel()
             counterJob = viewModelScope.launch {
-                counterUseCases.counterByIdUseCase(id).collectLatest {
-                    _counter.value = it
+                counterUseCases.counterByIdUseCase(id).collectLatest { counter ->
+                    _uiState.update { state ->
+                        state.copy(
+                            isLoading = false,
+                            counter = counter
+                        )
+                    }
                 }
             }
         }
@@ -84,54 +92,101 @@ class CounterHomeViewModel @Inject constructor(
                 counterId?.let {
                     changeCounter(it)
                 } ?: run {
-                    _eventFlow.emit(UiEvent.NoCounter)
+                    _uiState.update { state ->
+                        state.copy(isLoading = false)
+                    }
                 }
             }
         }
     }
 
-    private fun loadPreferences() {
-        viewModelScope.launch {
-            counterUseCases.readUserPreferenceUseCase(
-                booleanPreferencesKey(PreferencesKey.VIBRATE_PREF_KEY)
-            ).collectLatest {
-                _vibrateOnTap.value = it ?: false
+    private fun collectPreferences() {
+        viewModelScope.apply {
+            launch {
+                counterUseCases.readUserPreferenceUseCase(
+                    booleanPreferencesKey(PreferencesKey.VIBRATE_PREF_KEY)
+                ).collectLatest { vibrate ->
+                    _uiState.update { state ->
+                        state.copy(
+                            vibrateOnTap = vibrate ?: false
+                        )
+                    }
+                }
+            }
+            launch {
+                val keepScreenOn = counterUseCases.readUserPreferenceUseCase(
+                    booleanPreferencesKey(PreferencesKey.KEEP_SCREEN_ON_PREF_KEY)
+                ).first() ?: false
+                _uiState.update { state ->
+                    state.copy(keepScreenOn = keepScreenOn)
+                }
             }
         }
     }
 
     fun onEvent(counterHomeEvent: CounterHomeEvent) {
-        when(counterHomeEvent) {
-            is CounterHomeEvent.Edit -> {
-                _counter.value?.let {
-                    viewModelScope.launch {
-                        _eventFlow.emit(UiEvent.EditCounter(it))
+        viewModelScope.launch {
+            when(counterHomeEvent) {
+                CounterHomeEvent.Settings -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            navTarget = CounterHomeNavTarget.CounterSettings
+                        )
                     }
                 }
-            }
-            CounterHomeEvent.Reset -> {
-                _counter.value = counter.value?.copy(
-                    counterSavedValue = 0
-                )
-                saveCounter()
-            }
-            CounterHomeEvent.Increment -> {
-                counter.value?.let { counter ->
-                    if (counter.counterSavedValue + 1 in AppConstants.COUNTER_VALUE_RANGE) {
-                        _counter.value = counter.copy(
-                            counterSavedValue = counter.counterSavedValue.plus(1)
+                CounterHomeEvent.List -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            navTarget = CounterHomeNavTarget.CounterList
                         )
-                        saveCounter()
                     }
                 }
-            }
-            CounterHomeEvent.Decrement -> {
-                counter.value?.let { counter ->
-                    if (counter.counterSavedValue - 1 in AppConstants.COUNTER_VALUE_RANGE) {
-                        _counter.value = counter.copy(
-                            counterSavedValue = counter.counterSavedValue.minus(1)
+                CounterHomeEvent.Edit -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            navTarget = CounterHomeNavTarget.EditCounter
                         )
-                        saveCounter()
+                    }
+                }
+                CounterHomeEvent.Reset -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            counter = state.counter?.copy(counterSavedValue = 0)
+                        )
+                    }
+                    saveCounter()
+                }
+                CounterHomeEvent.Increment -> {
+                    _uiState.value.counter?.let { counter ->
+                        if (counter.counterSavedValue + 1 in AppConstants.COUNTER_VALUE_RANGE) {
+                            val newCounterValue = counter.counterSavedValue.plus(1)
+                            _uiState.update { state ->
+                                state.copy(
+                                    counter = state.counter?.copy(counterSavedValue = newCounterValue)
+                                )
+                            }
+                            saveCounter()
+                        }
+                    }
+                }
+                CounterHomeEvent.Decrement -> {
+                    _uiState.value.counter?.let { counter ->
+                        if (counter.counterSavedValue - 1 in AppConstants.COUNTER_VALUE_RANGE) {
+                            val newCounterValue = counter.counterSavedValue.minus(1)
+                            _uiState.update { state ->
+                                state.copy(
+                                    counter = state.counter?.copy(counterSavedValue = newCounterValue)
+                                )
+                            }
+                            saveCounter()
+                        }
+                    }
+                }
+                CounterHomeEvent.NavigationHandled -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            navTarget = CounterHomeNavTarget.Idle
+                        )
                     }
                 }
             }
@@ -141,16 +196,9 @@ class CounterHomeViewModel @Inject constructor(
     private fun saveCounter() {
         saveCounterJob?.cancel()
         saveCounterJob = viewModelScope.launch {
-            _counter.value?.let {
-                counterUseCases.insertCounterUseCase(it)
+            _uiState.value.counter?.let { counter ->
+                counterUseCases.insertCounterUseCase(counter)
             }
         }
-    }
-
-    sealed class UiEvent {
-
-        object NoCounter : UiEvent()
-
-        data class EditCounter(val counter: Counter) : UiEvent()
     }
 }
