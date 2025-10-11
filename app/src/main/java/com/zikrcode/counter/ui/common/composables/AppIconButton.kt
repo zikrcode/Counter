@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,11 +18,13 @@ fun AppIconButton(
     onClick: () -> Unit,
     icon: ImageVector,
     iconDescription: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colors: IconButtonColors? = null
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        colors = colors ?: IconButtonDefaults.iconButtonColors()
     ) {
         Icon(
             imageVector = icon,

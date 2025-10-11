@@ -20,7 +20,7 @@
 
     <!-- MainActivity -->
     <string name="counter_home">Counter</string>
-    <string name="counter_list">List</string>
+    <string name="counter_list">Counter List</string>
     <string name="counter_settings">Settings</string>
 
         <!-- CounterHomeScreen -->
@@ -34,13 +34,13 @@
             <string name="edit">Edit</string>
 
         <!-- CounterListScreen -->
+        <string name="counter_order">Counter Order</string>
+        <string name="delete">Delete</string>
         <string name="add">Add</string>
 
             <!-- CounterListViewModel -->
             <string name="current_counter_in_use">Current counter is in use!</string>
 
-            <!-- CounterGridItem -->
-            <string name="delete">Delete</string>
 
         <!-- AddEditCounterScreen -->
         <string name="new_counter">New counter</string>

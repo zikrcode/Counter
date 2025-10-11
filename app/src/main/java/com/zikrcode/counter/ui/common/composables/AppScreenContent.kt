@@ -11,7 +11,11 @@ import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -26,8 +30,20 @@ fun AppScreenContent(
     topBarEndIcon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
+    floatingActionButton: @Composable () -> Unit = { },
+    snackbarMessage: String? = null,
+    onSnackbarShown: () -> Unit = { },
     content: @Composable () -> Unit
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(snackbarMessage) {
+        snackbarMessage?.let { message ->
+            snackbarHostState.showSnackbar(message = message)
+            onSnackbarShown.invoke()
+        }
+    }
+
     Scaffold(
         topBar = {
             Column {
@@ -38,13 +54,17 @@ fun AppScreenContent(
                 )
                 HorizontalDivider()
             }
-        }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        floatingActionButton = floatingActionButton
     ) { paddingValues ->
         Box(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(Dimens.SpacingDoubleHalf),
+                .padding(Dimens.SpacingDouble),
             contentAlignment = Alignment.Center
         ) {
             if (loading) {
