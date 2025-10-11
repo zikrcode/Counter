@@ -19,19 +19,16 @@ package com.zikrcode.counter.ui.counter_list
 import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.domain.utils.CounterOrder
 
-sealed class CounterListEvent {
+sealed interface CounterListEvent {
+    data object ToggleOrderSection : CounterListEvent
+    data class Order(val counterOrder: CounterOrder) : CounterListEvent
+    data class Delete(val counter: Counter) : CounterListEvent
+    data object RestoreCounter : CounterListEvent
+    data object SnackbarShown: CounterListEvent
 
-    object ToggleOrderSection : CounterListEvent()
-
-    data class Order(val counterOrder: CounterOrder) : CounterListEvent()
-
-    data class SelectCounter(val counter: Counter) : CounterListEvent()
-
-    data class Delete(val counter: Counter) : CounterListEvent()
-
-    data class Edit(val counter: Counter) : CounterListEvent()
-
-    object NewCounter : CounterListEvent()
-
-    object RestoreCounter : CounterListEvent()
+    data object GoBack : CounterListEvent
+    data class SelectCounter(val id: Int) : CounterListEvent
+    data class Edit(val id: Int) : CounterListEvent
+    data object NewCounter : CounterListEvent
+    data object NavigationHandled : CounterListEvent
 }

@@ -16,8 +16,6 @@
 
 package com.zikrcode.counter.ui.counter_list
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,102 +28,130 @@ import com.zikrcode.counter.ui.utils.AppConstants
 import com.zikrcode.counter.ui.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class CounterListUiState(
+    val isLoading: Boolean = false,
+    val counters: List<Counter> = emptyList(),
+    val counterOrder: CounterOrder = CounterOrder.Date(OrderType.DESCENDING),
+    val isOrderSectionVisible: Boolean = false,
+    val message: UiText? = null,
+    val navTarget: CounterListNavTarget = CounterListNavTarget.Idle
+)
+
+sealed interface CounterListNavTarget {
+    data object NavigateBack : CounterListNavTarget
+    data object CounterHome : CounterListNavTarget
+    data class EditCounter(val id: Int) : CounterListNavTarget
+    data object NewCounter : CounterListNavTarget
+    data object Idle : CounterListNavTarget
+}
 
 @HiltViewModel
 class CounterListViewModel @Inject constructor(
     private val counterUseCases: CounterUseCases
 ) : ViewModel() {
 
+    private val _uiState = MutableStateFlow(CounterListUiState())
+    val uiState = _uiState.asStateFlow()
+
     private var loadAllCountersJob: Job? = null
 
-    private val _state = mutableStateOf(CounterListState())
-    val state: State<CounterListState> = _state
-
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
-
     init {
-        loadAllCounters(CounterOrder.Date(OrderType.DESCENDING))
+        loadAllCounters(_uiState.value.counterOrder)
     }
 
     private fun loadAllCounters(counterOrder: CounterOrder) {
+        _uiState.update { state ->
+            state.copy(isLoading = true)
+        }
+
         loadAllCountersJob?.cancel()
-        loadAllCountersJob = counterUseCases.allCountersUseCase(counterOrder)
+        loadAllCountersJob = counterUseCases
+            .allCountersUseCase(counterOrder)
             .onEach { counters ->
-                _state.value = state.value.copy(
-                    allCounters = counters,
-                    counterOrder = counterOrder
-                )
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        counters = counters
+                    )
+                }
             }
             .launchIn(viewModelScope)
     }
 
-    fun onEvent(counterListEvent: CounterListEvent) {
-        when (counterListEvent) {
+    fun onEvent(event: CounterListEvent) {
+        when (event) {
             CounterListEvent.ToggleOrderSection -> {
-
+                // TODO
             }
             is CounterListEvent.Order -> {
-
-            }
-            is CounterListEvent.SelectCounter -> {
-                viewModelScope.launch {
-                    counterListEvent.counter.id?.let {
-                        counterUseCases.writeUserPreferenceUseCase(
-                            key = intPreferencesKey(AppConstants.LAST_USED_COUNTER_ID_KEY),
-                            value = it
-                        )
-                        _eventFlow.emit(UiEvent.CounterSelected(counterListEvent.counter))
-                    }
-                }
+                // TODO
             }
             is CounterListEvent.Delete -> {
                 viewModelScope.launch {
                     val currentCounterId = counterUseCases.readUserPreferenceUseCase(
                         intPreferencesKey(AppConstants.LAST_USED_COUNTER_ID_KEY)
                     ).first()
-                    if (counterListEvent.counter.id == currentCounterId) {
-                        _eventFlow.emit(
-                            UiEvent.ShowSnackbar(
-                                UiText.StringResource(R.string.current_counter_in_use)
+                    if (event.counter.id == currentCounterId) {
+                        _uiState.update { state ->
+                            state.copy(
+                                message = UiText.StringResource(R.string.current_counter_in_use)
                             )
-                        )
+                        }
                     } else {
-                        counterUseCases.deleteCounterUseCase(counterListEvent.counter)
+                        counterUseCases.deleteCounterUseCase(event.counter)
+                    }
+                }
+            }
+            CounterListEvent.RestoreCounter -> {
+                // TODO RestoreCounter
+            }
+            is CounterListEvent.SnackbarShown -> {
+                _uiState.update { state ->
+                    state.copy(message = null)
+                }
+            }
+            CounterListEvent.GoBack -> {
+                _uiState.update { state ->
+                    state.copy(navTarget = CounterListNavTarget.NavigateBack)
+                }
+            }
+            is CounterListEvent.SelectCounter -> {
+                viewModelScope.launch {
+                    counterUseCases.writeUserPreferenceUseCase(
+                        key = intPreferencesKey(AppConstants.LAST_USED_COUNTER_ID_KEY),
+                        value = event.id
+                    )
+                    _uiState.update { state ->
+                        state.copy(navTarget = CounterListNavTarget.CounterHome)
                     }
                 }
             }
             is CounterListEvent.Edit -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.EditCounter(counterListEvent.counter))
+                _uiState.update { state ->
+                    state.copy(
+                        navTarget = CounterListNavTarget.EditCounter(event.id)
+                    )
                 }
             }
             CounterListEvent.NewCounter -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.CreateNewCounter)
+                _uiState.update { state ->
+                    state.copy(navTarget = CounterListNavTarget.NewCounter)
                 }
             }
-            CounterListEvent.RestoreCounter -> {
-
+            CounterListEvent.NavigationHandled -> {
+                _uiState.update { state ->
+                    state.copy(navTarget = CounterListNavTarget.Idle)
+                }
             }
         }
-    }
-
-    sealed class UiEvent {
-
-        data class ShowSnackbar(val message: UiText) : UiEvent()
-
-        data class CounterSelected(val counter: Counter) : UiEvent()
-
-        data class EditCounter(val counter: Counter) : UiEvent()
-
-        object CreateNewCounter : UiEvent()
     }
 }

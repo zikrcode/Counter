@@ -16,156 +16,178 @@
 
 package com.zikrcode.counter.ui.counter_list
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.counter.R
 import com.zikrcode.counter.domain.model.Counter
-import com.zikrcode.counter.ui.counter_list.component.CounterGridItem
+import com.zikrcode.counter.ui.common.composables.AppIconButton
+import com.zikrcode.counter.ui.common.composables.AppScreenContent
+import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.counter_list.component.CounterListItem
+import com.zikrcode.counter.ui.counter_list.component.CounterListItemHeight
 import com.zikrcode.counter.ui.utils.Dimens
-import kotlinx.coroutines.flow.collectLatest
+import com.zikrcode.counter.ui.utils.UiText
 
 @Composable
 fun CounterListScreen(
-    onCounterClick: () -> Unit,
-    onEditCounterClick: (Int?) -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateToCounterHome: () -> Unit,
+    onNavigateToEditCounter: (Int?) -> Unit,
     viewModel: CounterListViewModel = hiltViewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when(event) {
-                is CounterListViewModel.UiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(
-                        message = event.message.asString(context)
-                    )
-                }
-                is CounterListViewModel.UiEvent.CounterSelected -> {
-                    onCounterClick.invoke()
-                }
-                is CounterListViewModel.UiEvent.EditCounter -> {
-                    onEditCounterClick.invoke(event.counter.id)
-                }
-                CounterListViewModel.UiEvent.CreateNewCounter -> {
-                    onEditCounterClick.invoke(null)
-                }
+    LaunchedEffect(uiState.navTarget) {
+        when (val navTarget = uiState.navTarget) {
+            CounterListNavTarget.NavigateBack -> {
+                onNavigateBack.invoke()
+            }
+            CounterListNavTarget.CounterHome -> {
+                onNavigateToCounterHome.invoke()
+            }
+            is CounterListNavTarget.EditCounter -> {
+                onNavigateToEditCounter.invoke(navTarget.id)
+            }
+            CounterListNavTarget.NewCounter -> {
+                onNavigateToEditCounter.invoke(null)
+            }
+            CounterListNavTarget.Idle -> {
+                // no-op
             }
         }
+        viewModel.onEvent(CounterListEvent.NavigationHandled)
     }
 
-    val state = viewModel.state.value
-
     CounterListContent(
-        snackbarHostState = snackbarHostState,
-        state = state,
-        onEventClick = viewModel::onEvent
+        isLoading = uiState.isLoading,
+        message = uiState.message,
+        counters = uiState.counters,
+        onEvent = viewModel::onEvent
     )
 }
 
-@Preview(
-    showSystemUi = true,
-    showBackground = true,
-    device = Devices.PHONE
-)
+@PreviewLightDark
 @Composable
-fun CounterListContentPreview() {
-    CounterListContent(
-        snackbarHostState = SnackbarHostState(),
-        state = CounterListState(),
-        onEventClick = { }
-    )
-}
-
-@Composable
-private fun CounterListContent(
-    snackbarHostState: SnackbarHostState,
-    state: CounterListState,
-    onEventClick: (CounterListEvent) -> Unit
-) {
-    Scaffold(
-        floatingActionButton = {
-            CounterListScreenFAB {
-                onEventClick(CounterListEvent.NewCounter)
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
-        contentWindowInsets = WindowInsets(0.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(Dimens.SpacingSingle)
-        ) {
-            CounterListStaggeredGrid(
-                counters = state.allCounters,
-                onEventClick = onEventClick
-            )
-        }
-    }
-}
-
-@Composable
-private fun CounterListScreenFAB(
-    onClick: () -> Unit
-) {
-    FloatingActionButton(
-        onClick = onClick,
-        containerColor = MaterialTheme.colorScheme.primary
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_add),
-            contentDescription = stringResource(R.string.add)
+private fun CounterListContentPreview() {
+    CounterTheme {
+        CounterListContent(
+            isLoading = false,
+            message = null,
+            counters = listOf(
+                Counter.instance().copy(id = 0),
+                Counter.instance().copy(id = 1),
+                Counter.instance().copy(
+                    id = 2,
+                    counterDescription = "",
+                    counterSavedValue = 9999999
+                )
+            ),
+            onEvent = { }
         )
     }
 }
 
 @Composable
-private fun CounterListStaggeredGrid(
+private fun CounterListContent(
+    isLoading: Boolean,
+    message: UiText?,
     counters: List<Counter>,
-    onEventClick: (CounterListEvent) -> Unit
+    onEvent: (CounterListEvent) -> Unit
 ) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2)
-    ) {
-        items(counters) { counter ->
-            CounterGridItem(
-                counter = counter,
+    val context = LocalContext.current
+
+    AppScreenContent(
+        loading = isLoading,
+        title = stringResource(R.string.counter_list),
+        topBarStartIcon = {
+            AppIconButton(
                 onClick = {
-                    onEventClick(CounterListEvent.SelectCounter(counter))
+                    onEvent.invoke(CounterListEvent.GoBack)
                 },
-                onDeleteClick = {
-                    onEventClick(CounterListEvent.Delete(counter))
+                icon = Icons.AutoMirrored.Outlined.ArrowBack,
+                iconDescription = stringResource(R.string.go_back)
+            )
+        },
+        topBarEndIcon = {
+            AppIconButton(
+                onClick = {
+                    onEvent.invoke(CounterListEvent.ToggleOrderSection)
                 },
-                onEditClick = {
-                    onEventClick(CounterListEvent.Edit(counter))
+                icon = Icons.Outlined.FilterList,
+                iconDescription = stringResource(R.string.counter_order)
+            )
+        },
+        floatingActionButton = {
+            NewCounterFloatingActionButton(
+                onClick = {
+                    onEvent.invoke(CounterListEvent.NewCounter)
                 }
             )
+        },
+        snackbarMessage = message?.asString(context),
+        onSnackbarShown = {
+            onEvent.invoke(CounterListEvent.SnackbarShown)
         }
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = CounterListItemHeight),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingDouble)
+        ) {
+            items(counters) { counter ->
+                val counterId = counter.id ?: return@items
+                CounterListItem(
+                    counter = counter,
+                    onClick = {
+                        onEvent.invoke(CounterListEvent.SelectCounter(counterId))
+                    },
+                    onDeleteClick = {
+                        onEvent.invoke(CounterListEvent.Delete(counter))
+                    },
+                    onEditClick = {
+                        onEvent.invoke(CounterListEvent.Edit(counterId))
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun NewCounterFloatingActionButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    MediumFloatingActionButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = stringResource(R.string.add),
+            modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize),
+        )
     }
 }

@@ -76,10 +76,13 @@ fun MainNavigation(modifier: Modifier = Modifier) {
         }
         composable<AppRoute.CounterList> {
             CounterListScreen(
-                onCounterClick = {
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onNavigateToCounterHome = {
                     navController.navigateToAppRoute(AppRoute.CounterHome)
                 },
-                onEditCounterClick = { counterId ->
+                onNavigateToEditCounter = { counterId ->
                     navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
                 }
             )
