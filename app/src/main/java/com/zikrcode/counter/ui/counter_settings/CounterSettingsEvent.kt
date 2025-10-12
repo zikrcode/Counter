@@ -16,7 +16,11 @@
 
 package com.zikrcode.counter.ui.counter_settings
 
-sealed class CounterSettingsEvent {
+sealed interface CounterSettingsEvent {
+    data object VibrateOnTapPreferenceChanged : CounterSettingsEvent
+    data object KeepScreenOnPreferenceChanged : CounterSettingsEvent
 
-    data class PreferenceChanged(val key: String) : CounterSettingsEvent()
+    data object GoBack : CounterSettingsEvent
+    data object About : CounterSettingsEvent
+    data object NavigationHandled : CounterSettingsEvent
 }

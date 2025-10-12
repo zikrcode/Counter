@@ -88,7 +88,14 @@ fun MainNavigation(modifier: Modifier = Modifier) {
             )
         }
         composable<AppRoute.CounterSettings> {
-            CounterSettingsScreen()
+            CounterSettingsScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onNavigateToAbout = {
+                    // TODO: Implement navigation to About screen
+                }
+            )
         }
 
         composable<AppRoute.CounterEditor> {

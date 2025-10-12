@@ -16,65 +16,107 @@
 
 package com.zikrcode.counter.ui.counter_settings
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zikrcode.counter.domain.use_case.CounterUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class CounterSettingsUiState(
+    val isLoading: Boolean = false,
+    val vibrateOnTap: Boolean = false,
+    val keepScreenOn: Boolean = false,
+    val navTarget: CounterSettingsNavTarget = CounterSettingsNavTarget.Idle
+)
+
+sealed interface CounterSettingsNavTarget {
+    data object NavigateBack : CounterSettingsNavTarget
+    data object About : CounterSettingsNavTarget
+    data object Idle : CounterSettingsNavTarget
+}
 
 @HiltViewModel
 class CounterSettingsViewModel @Inject constructor(
     private val counterUseCases: CounterUseCases
 ) : ViewModel() {
 
-    private val _vibrateOnTap = mutableStateOf(false)
-    val vibrateOnTap: State<Boolean> = _vibrateOnTap
-
-    private val _keepScreenOn = mutableStateOf(false)
-    val keepScreenOn: State<Boolean> = _keepScreenOn
+    private val _uiState = MutableStateFlow(CounterSettingsUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
+        collectPreferences()
+    }
+
+    private fun collectPreferences() {
+        _uiState.update { state ->
+            state.copy(isLoading = true)
+        }
+
         viewModelScope.apply {
             launch {
                 counterUseCases.readUserPreferenceUseCase(
                     booleanPreferencesKey(PreferencesKey.VIBRATE_PREF_KEY)
-                ).collectLatest {
-                    _vibrateOnTap.value = it ?: false
+                ).collectLatest { vibrateOnTap ->
+                    _uiState.update { state ->
+                        state.copy(
+                            isLoading = false,
+                            vibrateOnTap = vibrateOnTap ?: false
+                        )
+                    }
                 }
             }
             launch {
                 counterUseCases.readUserPreferenceUseCase(
                     booleanPreferencesKey(PreferencesKey.KEEP_SCREEN_ON_PREF_KEY)
-                ).collectLatest {
-                    _keepScreenOn.value = it ?: false
+                ).collectLatest { keepScreenOn ->
+                    _uiState.update { state ->
+                        state.copy(
+                            isLoading = false,
+                            keepScreenOn = keepScreenOn ?: false
+                        )
+                    }
                 }
             }
         }
     }
 
-    fun onEvent(counterSettingsEvent: CounterSettingsEvent) {
-        when (counterSettingsEvent) {
-            is CounterSettingsEvent.PreferenceChanged -> {
+    fun onEvent(event: CounterSettingsEvent) {
+        when (event) {
+            CounterSettingsEvent.VibrateOnTapPreferenceChanged -> {
                 viewModelScope.launch {
-                    when (counterSettingsEvent.key) {
-                        PreferencesKey.VIBRATE_PREF_KEY -> {
-                            counterUseCases.writeUserPreferenceUseCase(
-                                key = booleanPreferencesKey(PreferencesKey.VIBRATE_PREF_KEY),
-                                value = !_vibrateOnTap.value
-                            )
-                        }
-                        PreferencesKey.KEEP_SCREEN_ON_PREF_KEY -> {
-                            counterUseCases.writeUserPreferenceUseCase(
-                                key = booleanPreferencesKey(PreferencesKey.KEEP_SCREEN_ON_PREF_KEY),
-                                value = !_keepScreenOn.value
-                            )
-                        }
-                    }
+                    counterUseCases.writeUserPreferenceUseCase(
+                        key = booleanPreferencesKey(PreferencesKey.VIBRATE_PREF_KEY),
+                        value = !_uiState.value.vibrateOnTap
+                    )
+                }
+            }
+            CounterSettingsEvent.KeepScreenOnPreferenceChanged -> {
+                viewModelScope.launch {
+                    counterUseCases.writeUserPreferenceUseCase(
+                        key = booleanPreferencesKey(PreferencesKey.KEEP_SCREEN_ON_PREF_KEY),
+                        value = !_uiState.value.keepScreenOn
+                    )
+                }
+            }
+            CounterSettingsEvent.GoBack -> {
+                _uiState.update { state ->
+                    state.copy(navTarget = CounterSettingsNavTarget.NavigateBack)
+                }
+            }
+            CounterSettingsEvent.About -> {
+                _uiState.update { state ->
+                    state.copy(navTarget = CounterSettingsNavTarget.About)
+                }
+            }
+            CounterSettingsEvent.NavigationHandled -> {
+                _uiState.update { state ->
+                    state.copy(navTarget = CounterSettingsNavTarget.Idle)
                 }
             }
         }
