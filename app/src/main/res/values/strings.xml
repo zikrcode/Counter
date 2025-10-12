@@ -55,6 +55,7 @@
 
 
         <!-- CounterSettingsScreen -->
+        <string name="about">About</string>
         <string name="vibrate_on_tap_name">Vibrate on Tap</string>
         <string name="vibrate_on_tap_description">Vibrate on value change</string>
         <string name="keep_screen_on_name">Keep Screen On</string>
