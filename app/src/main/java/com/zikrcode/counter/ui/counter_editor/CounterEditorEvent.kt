@@ -16,17 +16,14 @@
 
 package com.zikrcode.counter.ui.counter_editor
 
-sealed class CounterEditorEvent {
+sealed interface CounterEditorEvent {
+    data object RestoreCounter : CounterEditorEvent
+    data class NameChanged(val name: String) : CounterEditorEvent
+    data class DescriptionChanged(val description: String) : CounterEditorEvent
+    data class ValueChanged(val value: Int) : CounterEditorEvent
+    data object MessageShown : CounterEditorEvent
 
-    data class EnteredName(val value: String) : CounterEditorEvent()
-
-    data class EnteredValue(val value: String) : CounterEditorEvent()
-
-    data class EnteredDescription(val value: String) : CounterEditorEvent()
-
-    object GoBack : CounterEditorEvent()
-
-    object Cancel : CounterEditorEvent()
-
-    object Save : CounterEditorEvent()
+    data object GoBack : CounterEditorEvent
+    data object Cancel : CounterEditorEvent
+    data object Save : CounterEditorEvent
 }

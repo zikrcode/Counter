@@ -17,6 +17,7 @@
 <resources>
 
     <string name="app_name">Counter</string>
+    <string name="counter">Counter</string>
 
     <!-- MainActivity -->
     <string name="counter_home">Counter</string>
@@ -45,13 +46,16 @@
         <!-- AddEditCounterScreen -->
         <string name="new_counter">New counter</string>
         <string name="go_back">Go back</string>
+        <string name="restore_counter">Restore counter</string>
         <string name="cancel">Cancel</string>
         <string name="save">Save</string>
 
             <!-- AddCounterForm -->
+    <string name="basic_information">Basic Information</string>
             <string name="counter_name">Name</string>
             <string name="counter_value">Value</string>
             <string name="counter_description">Description</string>
+    <string name="description_placeholder">Add a description for your counter...</string>
 
 
         <!-- CounterSettingsScreen -->

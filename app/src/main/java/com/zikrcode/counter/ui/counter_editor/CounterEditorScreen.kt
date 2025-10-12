@@ -16,188 +16,170 @@
 
 package com.zikrcode.counter.ui.counter_editor
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.RestorePage
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.counter.R
-import com.zikrcode.counter.ui.counter_editor.component.AddEditCounterForm
+import com.zikrcode.counter.ui.common.composables.AppIconButton
+import com.zikrcode.counter.ui.common.composables.AppScreenContent
+import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.counter_editor.component.CounterEditorForm
 import com.zikrcode.counter.ui.utils.Dimens
-import kotlinx.coroutines.flow.collectLatest
+import com.zikrcode.counter.ui.utils.UiText
 
 @Composable
 fun CounterEditorScreen(
-    onBackClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: CounterEditorViewModel = hiltViewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when(event) {
-                is CounterEditorViewModel.UiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(
-                        message = event.message.asString(context)
-                    )
-                }
-                CounterEditorViewModel.UiEvent.NavigateBack,
-                CounterEditorViewModel.UiEvent.CounterSaved,
-                CounterEditorViewModel.UiEvent.CounterCanceled -> {
-                    onBackClick.invoke()
-                }
+    LaunchedEffect(uiState.navTarget) {
+        when (uiState.navTarget) {
+            CounterEditorNavTarget.NavigateBack -> {
+                onNavigateBack.invoke()
+            }
+            CounterEditorNavTarget.Idle -> {
+                // no-op
             }
         }
     }
 
-    AddEditCounterContent(
-        snackbarHostState = snackbarHostState,
-        title = null, // TODO pass actual counter title
-        counterNameState = viewModel.counterName,
-        counterValueState = viewModel.counterValue,
-        counterDescriptionState = viewModel.counterDescription,
-        onEventClick = viewModel::onEvent
+    CounterEditorScreenContent(
+        isLoading = uiState.isLoading,
+        counterId = uiState.counterId,
+        counterName = uiState.counterName,
+        counterValue = uiState.counterValue,
+        counterDescription = uiState.counterDescription,
+        message = uiState.message,
+        onEvent = viewModel::onEvent
     )
 }
 
-@Preview(
-    showSystemUi = true,
-    showBackground = true,
-    device = Devices.PHONE
-)
+@PreviewLightDark
 @Composable
-fun AddEditCounterContentPreview() {
-    AddEditCounterContent(
-        snackbarHostState = SnackbarHostState(),
-        title = null,
-        counterNameState = remember { mutableStateOf("") },
-        counterDescriptionState = remember { mutableStateOf("") },
-        counterValueState = remember { mutableStateOf("") },
-        onEventClick = { }
-    )
+private fun CounterEditorScreenContentPreview() {
+    CounterTheme {
+        CounterEditorScreenContent(
+            isLoading = false,
+            counterId = null,
+            counterName = "",
+            counterValue = 0,
+            counterDescription = "",
+            message = null,
+            onEvent = { }
+        )
+    }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun AddEditCounterContent(
-    snackbarHostState: SnackbarHostState,
-    title: String?,
-    counterNameState: State<String>,
-    counterValueState: State<String>,
-    counterDescriptionState: State<String>,
-    onEventClick: (CounterEditorEvent) -> Unit
+private fun CounterEditorScreenContent(
+    isLoading: Boolean,
+    counterId: Int?,
+    counterName: String,
+    counterValue: Int,
+    counterDescription: String,
+    message: UiText?,
+    onEvent: (CounterEditorEvent) -> Unit
 ) {
-    Scaffold(
-        modifier = Modifier.consumeWindowInsets(WindowInsets.systemBars),
-        topBar = {
-            AddEditCounterTopAppBar(
-                onGoBackClick = {
-                    onEventClick(CounterEditorEvent.GoBack)
+    AppScreenContent(
+        title = if (counterId == null) {
+            stringResource(R.string.new_counter)
+        } else {
+            stringResource(R.string.counter)
+        },
+        topBarStartIcon = {
+            AppIconButton(
+                onClick = {
+                    onEvent.invoke(CounterEditorEvent.GoBack)
                 },
-                title = title ?: stringResource(R.string.new_counter),
-                onCancelClick = {
-                    onEventClick(CounterEditorEvent.Cancel)
-                },
-                onSaveClick = {
-                    onEventClick(CounterEditorEvent.Save)
-                }
+                icon = Icons.AutoMirrored.Outlined.ArrowBack,
+                iconDescription = stringResource(R.string.go_back)
             )
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+        topBarEndIcon = {
+            AppIconButton(
+                onClick = {
+                    onEvent.invoke(CounterEditorEvent.RestoreCounter)
+                },
+                icon = Icons.Outlined.RestorePage,
+                iconDescription = stringResource(R.string.restore_counter)
+            )
         },
-        contentWindowInsets = WindowInsets.systemBars
+        loading = isLoading,
+        snackbarMessage = message?.asString(),
+        onSnackbarShown = {
+            onEvent.invoke(CounterEditorEvent.MessageShown)
+        }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(Dimens.SpacingSingle)
-        ) {
-            AddEditCounterForm(
-                counterNameState = counterNameState,
+        Column(modifier = Modifier.fillMaxSize()) {
+            CounterEditorForm(
+                counterName = counterName,
                 onCounterNameChange = { counterName ->
-                    onEventClick(
-                        CounterEditorEvent.EnteredName(counterName)
-                    )
+                    onEvent.invoke(CounterEditorEvent.NameChanged(counterName))
                 },
-                counterDescriptionState = counterDescriptionState,
+                counterDescription = counterDescription,
                 onCounterDescriptionChange = { counterDescription ->
-                    onEventClick(
-                        CounterEditorEvent.EnteredDescription(counterDescription)
-                    )
+                    onEvent.invoke(CounterEditorEvent.DescriptionChanged(counterDescription))
                 },
-                counterValueState = counterValueState,
+                counterValue = counterValue,
                 onCounterValueChange = { counterValue ->
-                    onEventClick(
-                        CounterEditorEvent.EnteredValue(counterValue)
-                    )
+                    onEvent.invoke(CounterEditorEvent.ValueChanged(counterValue))
                 }
             )
+            Spacer(Modifier.weight(1f))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .consumeWindowInsets(WindowInsets.navigationBars)
+                    .imePadding(),
+                horizontalArrangement = Arrangement.spacedBy(
+                    space = Dimens.SpacingSingle,
+                    alignment = Alignment.End
+                )
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        onEvent.invoke(CounterEditorEvent.Cancel)
+                    },
+                    shape = ButtonDefaults.squareShape
+                ) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+                Button(
+                    onClick = {
+                        onEvent.invoke(CounterEditorEvent.Save)
+                    },
+                    shape = ButtonDefaults.squareShape
+                ) {
+                    Text(text = stringResource(R.string.save))
+                }
+            }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AddEditCounterTopAppBar(
-    onGoBackClick: () -> Unit,
-    title: String,
-    onCancelClick: () -> Unit,
-    onSaveClick: () -> Unit
-) {
-    TopAppBar(
-        title = {
-            Text(text = title)
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = onGoBackClick
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    contentDescription = stringResource(R.string.go_back)
-                )
-            }
-        },
-        actions = {
-            IconButton(
-                onClick = onCancelClick
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_cancel),
-                    contentDescription = stringResource(R.string.cancel)
-                )
-            }
-            IconButton(
-                onClick = onSaveClick
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_save),
-                    contentDescription = stringResource(R.string.save)
-                )
-            }
-        }
-    )
 }
