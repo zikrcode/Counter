@@ -100,7 +100,7 @@ fun MainNavigation(modifier: Modifier = Modifier) {
 
         composable<AppRoute.CounterEditor> {
             CounterEditorScreen(
-                onBackClick = {
+                onNavigateBack = {
                     navController.navigateUp()
                 }
             )

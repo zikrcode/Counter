@@ -16,8 +16,6 @@
 
 package com.zikrcode.counter.ui.counter_editor
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,11 +25,27 @@ import com.zikrcode.counter.domain.use_case.CounterUseCases
 import com.zikrcode.counter.ui.navigation.AppRoute
 import com.zikrcode.counter.ui.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class CounterEditorUiState(
+    val isLoading: Boolean = false,
+    val counterId: Int?,
+    val counterName: String = "",
+    val counterDescription: String = "",
+    val counterValue: Int = 0,
+    val message: UiText? = null,
+    val navTarget: CounterEditorNavTarget = CounterEditorNavTarget.Idle
+)
+
+sealed interface CounterEditorNavTarget {
+    data object NavigateBack : CounterEditorNavTarget
+    data object Idle : CounterEditorNavTarget
+}
 
 @HiltViewModel
 class CounterEditorViewModel @Inject constructor(
@@ -42,83 +56,82 @@ class CounterEditorViewModel @Inject constructor(
     private val args: AppRoute.CounterEditor = savedStateHandle.toRoute()
     private var counterId: Int? = args.counterId
 
-    private val _counterName = mutableStateOf("")
-    val counterName: State<String> = _counterName
-
-    private val _counterDescription = mutableStateOf("")
-    val counterDescription: State<String> = _counterDescription
-
-    private val _counterValue = mutableStateOf("")
-    val counterValue: State<String> = _counterValue
-
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _uiState = MutableStateFlow(
+        CounterEditorUiState(counterId = counterId)
+    )
+    val uiState = _uiState.asStateFlow()
 
     init {
+        loadCounter()
+    }
+
+    private fun loadCounter() {
         counterId?.let { id ->
+            _uiState.update { state ->
+                state.copy(isLoading = true)
+            }
+
             viewModelScope.launch {
-                counterUseCases.counterByIdUseCase(id).first().also { counter ->
-                    counterId = counter.id
-                    _counterName.value = counter.counterName
-                    _counterDescription.value = counter.counterDescription
-                    _counterValue.value = counter.counterSavedValue.toString()
+                val counter = counterUseCases.counterByIdUseCase(id).first()
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false,
+                        counterName = counter.counterName,
+                        counterDescription = counter.counterDescription,
+                        counterValue = counter.counterSavedValue
+                    )
                 }
             }
         }
     }
 
-    fun onEvent(counterEditorEvent: CounterEditorEvent) {
-
-        when (counterEditorEvent) {
-            is CounterEditorEvent.EnteredName -> {
-                _counterName.value = counterEditorEvent.value
+    fun onEvent(event: CounterEditorEvent) = when (event) {
+        CounterEditorEvent.RestoreCounter -> {
+            loadCounter()
+        }
+        is CounterEditorEvent.NameChanged -> {
+            _uiState.update { state ->
+                state.copy(counterName = event.name)
             }
-            is CounterEditorEvent.EnteredValue -> {
-                _counterValue.value = counterEditorEvent.value
+        }
+        is CounterEditorEvent.DescriptionChanged -> {
+            _uiState.update { state ->
+                state.copy(counterDescription = event.description)
             }
-            is CounterEditorEvent.EnteredDescription -> {
-                _counterDescription.value = counterEditorEvent.value
+        }
+        is CounterEditorEvent.ValueChanged -> {
+            _uiState.update { state ->
+                state.copy(counterValue = event.value)
             }
-            CounterEditorEvent.GoBack -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.NavigateBack)
-                }
+        }
+        CounterEditorEvent.MessageShown -> {
+            _uiState.update { state ->
+                state.copy(message = null)
             }
-            CounterEditorEvent.Cancel -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.CounterCanceled)
-                }
+        }
+        CounterEditorEvent.GoBack, CounterEditorEvent.Cancel -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterEditorNavTarget.NavigateBack)
             }
-            CounterEditorEvent.Save -> {
-                viewModelScope.launch {
-                    val counterValidationResult = counterUseCases.insertCounterUseCase(
-                        Counter(
-                            id = counterId,
-                            counterName = counterName.value,
-                            counterDescription = counterDescription.value,
-                            counterDate = System.currentTimeMillis(),
-                            counterSavedValue = counterValue.value.toIntOrNull() ?: 0
-                        )
-                    )
-
-                    counterValidationResult.errorMessage?.let {
-                        _eventFlow.emit(UiEvent.ShowSnackbar(it))
+        }
+        CounterEditorEvent.Save -> {
+            viewModelScope.launch {
+                val counter = Counter(
+                    id = counterId,
+                    counterName = _uiState.value.counterName,
+                    counterDescription = _uiState.value.counterDescription,
+                    counterDate = System.currentTimeMillis(),
+                    counterSavedValue = _uiState.value.counterValue
+                )
+                val counterValidationResult = counterUseCases.insertCounterUseCase(counter)
+                _uiState.update { state ->
+                    counterValidationResult.errorMessage?.let { message ->
+                        state.copy(message = message)
                     } ?: run {
-                        _eventFlow.emit(UiEvent.CounterSaved)
+                        state.copy(navTarget = CounterEditorNavTarget.NavigateBack)
                     }
                 }
             }
         }
-    }
-
-    sealed class UiEvent {
-
-        data class ShowSnackbar(val message: UiText) : UiEvent()
-
-        object NavigateBack : UiEvent()
-
-        object CounterCanceled : UiEvent()
-
-        object CounterSaved : UiEvent()
     }
 }

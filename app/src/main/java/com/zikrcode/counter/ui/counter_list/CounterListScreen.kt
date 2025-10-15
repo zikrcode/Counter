@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -115,8 +114,6 @@ private fun CounterListContent(
     counters: List<Counter>,
     onEvent: (CounterListEvent) -> Unit
 ) {
-    val context = LocalContext.current
-
     AppScreenContent(
         loading = isLoading,
         title = stringResource(R.string.counter_list),
@@ -145,7 +142,7 @@ private fun CounterListContent(
                 }
             )
         },
-        snackbarMessage = message?.asString(context),
+        snackbarMessage = message?.asString(),
         onSnackbarShown = {
             onEvent.invoke(CounterListEvent.SnackbarShown)
         }
