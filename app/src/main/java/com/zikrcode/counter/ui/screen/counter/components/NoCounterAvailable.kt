@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_home.components
+package com.zikrcode.counter.ui.screen.counter.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedCard

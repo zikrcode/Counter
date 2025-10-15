@@ -98,7 +98,7 @@ private fun CounterSettingsScreenContent(
     onEvent: (CounterSettingsEvent) -> Unit
 ) {
     AppScreenContent(
-        title = stringResource(R.string.counter_settings),
+        title = stringResource(R.string.settings),
         topBarStartIcon = {
             AppIconButton(
                 onClick = {

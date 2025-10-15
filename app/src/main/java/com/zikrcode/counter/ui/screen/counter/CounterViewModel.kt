@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_home
+package com.zikrcode.counter.ui.screen.counter
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -34,27 +34,27 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class CounterHomeUiState(
+data class CounterUiState(
     val isLoading: Boolean = false,
     val counter: Counter? = null,
     val keepScreenOn: Boolean = false,
     val vibrateOnTap: Boolean = false,
-    val navTarget: CounterHomeNavTarget = CounterHomeNavTarget.Idle
+    val navTarget: CounterNavTarget = CounterNavTarget.Idle
 )
 
-sealed interface CounterHomeNavTarget {
-    data object EditCounter : CounterHomeNavTarget
-    data object CounterSettings : CounterHomeNavTarget
-    data object CounterList : CounterHomeNavTarget
-    data object Idle : CounterHomeNavTarget
+sealed interface CounterNavTarget {
+    data object Settings : CounterNavTarget
+    data object Counters : CounterNavTarget
+    data object CounterEditor : CounterNavTarget
+    data object Idle : CounterNavTarget
 }
 
 @HiltViewModel
-class CounterHomeViewModel @Inject constructor(
+class CounterViewModel @Inject constructor(
     private val counterUseCases: CounterUseCases
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CounterHomeUiState())
+    private val _uiState = MutableStateFlow(CounterUiState())
     val uiState = _uiState.asStateFlow()
 
     private var saveCounterJob: Job? = null
@@ -124,71 +124,65 @@ class CounterHomeViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(counterHomeEvent: CounterHomeEvent) {
-        viewModelScope.launch {
-            when(counterHomeEvent) {
-                CounterHomeEvent.Settings -> {
+    fun onEvent(event: CounterEvent) = when (event) {
+        CounterEvent.Settings -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterNavTarget.Settings)
+            }
+        }
+
+        CounterEvent.Counters -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterNavTarget.Counters)
+            }
+        }
+
+        CounterEvent.Increment -> {
+            _uiState.value.counter?.let { counter ->
+                if (counter.counterSavedValue + 1 in AppConstants.COUNTER_VALUE_RANGE) {
+                    val newCounterValue = counter.counterSavedValue.plus(1)
                     _uiState.update { state ->
                         state.copy(
-                            navTarget = CounterHomeNavTarget.CounterSettings
-                        )
-                    }
-                }
-                CounterHomeEvent.List -> {
-                    _uiState.update { state ->
-                        state.copy(
-                            navTarget = CounterHomeNavTarget.CounterList
-                        )
-                    }
-                }
-                CounterHomeEvent.Edit -> {
-                    _uiState.update { state ->
-                        state.copy(
-                            navTarget = CounterHomeNavTarget.EditCounter
-                        )
-                    }
-                }
-                CounterHomeEvent.Reset -> {
-                    _uiState.update { state ->
-                        state.copy(
-                            counter = state.counter?.copy(counterSavedValue = 0)
+                            counter = state.counter?.copy(counterSavedValue = newCounterValue)
                         )
                     }
                     saveCounter()
                 }
-                CounterHomeEvent.Increment -> {
-                    _uiState.value.counter?.let { counter ->
-                        if (counter.counterSavedValue + 1 in AppConstants.COUNTER_VALUE_RANGE) {
-                            val newCounterValue = counter.counterSavedValue.plus(1)
-                            _uiState.update { state ->
-                                state.copy(
-                                    counter = state.counter?.copy(counterSavedValue = newCounterValue)
-                                )
-                            }
-                            saveCounter()
-                        }
-                    }
-                }
-                CounterHomeEvent.Decrement -> {
-                    _uiState.value.counter?.let { counter ->
-                        if (counter.counterSavedValue - 1 in AppConstants.COUNTER_VALUE_RANGE) {
-                            val newCounterValue = counter.counterSavedValue.minus(1)
-                            _uiState.update { state ->
-                                state.copy(
-                                    counter = state.counter?.copy(counterSavedValue = newCounterValue)
-                                )
-                            }
-                            saveCounter()
-                        }
-                    }
-                }
-                CounterHomeEvent.NavigationHandled -> {
+            }
+        }
+
+        CounterEvent.Reset -> {
+            _uiState.update { state ->
+                state.copy(
+                    counter = state.counter?.copy(counterSavedValue = 0)
+                )
+            }
+            saveCounter()
+        }
+
+        CounterEvent.Decrement -> {
+            _uiState.value.counter?.let { counter ->
+                if (counter.counterSavedValue - 1 in AppConstants.COUNTER_VALUE_RANGE) {
+                    val newCounterValue = counter.counterSavedValue.minus(1)
                     _uiState.update { state ->
                         state.copy(
-                            navTarget = CounterHomeNavTarget.Idle
+                            counter = state.counter?.copy(counterSavedValue = newCounterValue)
                         )
                     }
+                    saveCounter()
                 }
+            }
+        }
+
+        CounterEvent.Edit -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterNavTarget.CounterEditor)
+            }
+        }
+
+        CounterEvent.NavigationHandled -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterNavTarget.Idle)
             }
         }
     }

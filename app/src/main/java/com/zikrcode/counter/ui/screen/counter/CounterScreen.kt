@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_home
+package com.zikrcode.counter.ui.screen.counter
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,56 +40,56 @@ import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.ui.common.composables.AppIconButton
 import com.zikrcode.counter.ui.common.composables.AppScreenContent
 import com.zikrcode.counter.ui.common.theme.CounterTheme
-import com.zikrcode.counter.ui.counter_home.components.CircleButton
-import com.zikrcode.counter.ui.counter_home.components.CounterActionButtons
-import com.zikrcode.counter.ui.counter_home.components.NoCounterAvailable
+import com.zikrcode.counter.ui.screen.counter.components.CircleButton
+import com.zikrcode.counter.ui.screen.counter.components.CounterActionButtons
+import com.zikrcode.counter.ui.screen.counter.components.NoCounterAvailable
 import com.zikrcode.counter.ui.counter_settings.ChangeScreenVisibility
 
 @Composable
-fun CounterHomeScreen(
-    onSettingsClick: () -> Unit,
-    onListClick: () -> Unit,
-    onEditClick: (Int) -> Unit,
-    viewModel: CounterHomeViewModel = hiltViewModel()
+fun CounterScreen(
+    onNavigateToSettings: () -> Unit,
+    onNavigateToCounters: () -> Unit,
+    onNavigateToCounterEditor: (Int) -> Unit,
+    viewModel: CounterViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.navTarget) {
         when (uiState.navTarget) {
-            CounterHomeNavTarget.CounterSettings -> {
-                onSettingsClick.invoke()
+            CounterNavTarget.Settings -> {
+                onNavigateToSettings.invoke()
             }
-            CounterHomeNavTarget.CounterList -> {
-                onListClick.invoke()
+            CounterNavTarget.Counters -> {
+                onNavigateToCounters.invoke()
             }
-            CounterHomeNavTarget.EditCounter -> {
+            CounterNavTarget.CounterEditor -> {
                 uiState.counter?.id?.let {
-                    onEditClick.invoke(it)
+                    onNavigateToCounterEditor.invoke(it)
                 }
             }
-            CounterHomeNavTarget.Idle -> {
+            CounterNavTarget.Idle -> {
                 // no-op
             }
         }
-        viewModel.onEvent(CounterHomeEvent.NavigationHandled)
+        viewModel.onEvent(CounterEvent.NavigationHandled)
     }
 
-    CounterHomeScreenContent(
+    CounterScreenContent(
         isLoading = uiState.isLoading,
         counter = uiState.counter,
         vibrateOnTap = uiState.vibrateOnTap,
         onEvent = viewModel::onEvent
     )
 
-    // to make preview work it is placed outside CounterHomeScreenContent
+    // to make preview work it is placed outside CounterScreenContent
     ChangeScreenVisibility(uiState.keepScreenOn)
 }
 
 @PreviewLightDark
 @Composable
-private fun CounterHomeScreenContentPreview() {
+private fun CounterScreenContentPreview() {
     CounterTheme {
-        CounterHomeScreenContent(
+        CounterScreenContent(
             isLoading = false,
             counter = Counter.instance(),
             vibrateOnTap = false,
@@ -99,28 +99,28 @@ private fun CounterHomeScreenContentPreview() {
 }
 
 @Composable
-private fun CounterHomeScreenContent(
+private fun CounterScreenContent(
     isLoading: Boolean,
     counter: Counter?,
     vibrateOnTap: Boolean,
-    onEvent: (CounterHomeEvent) -> Unit
+    onEvent: (CounterEvent) -> Unit
 ) {
     AppScreenContent(
         loading = isLoading,
-        title = counter?.counterName ?: stringResource(R.string.app_name),
+        title = counter?.counterName ?: stringResource(R.string.counter),
         topBarStartIcon = {
             AppIconButton(
                 onClick = {
-                    onEvent.invoke(CounterHomeEvent.Settings)
+                    onEvent.invoke(CounterEvent.Settings)
                 },
                 icon = Icons.Outlined.Settings,
-                iconDescription = stringResource(R.string.counter_settings)
+                iconDescription = stringResource(R.string.settings)
             )
         },
         topBarEndIcon = {
             AppIconButton(
                 onClick = {
-                    onEvent.invoke(CounterHomeEvent.List)
+                    onEvent.invoke(CounterEvent.Counters)
                 },
                 icon = Icons.AutoMirrored.Outlined.FeaturedPlayList,
                 iconDescription = stringResource(R.string.counter_list)
@@ -147,19 +147,19 @@ private fun CounterHomeScreenContent(
                         vibrate = vibrateOnTap,
                         currentValue = counter.counterSavedValue,
                         onClick = {
-                            onEvent.invoke(CounterHomeEvent.Increment)
+                            onEvent.invoke(CounterEvent.Increment)
                         }
                     )
                 }
                 CounterActionButtons(
                     onResetClick = {
-                        onEvent.invoke(CounterHomeEvent.Reset)
+                        onEvent.invoke(CounterEvent.Reset)
                     },
                     onDecrementClick = {
-                        onEvent(CounterHomeEvent.Decrement)
+                        onEvent(CounterEvent.Decrement)
                     },
                     onEditClick = {
-                        onEvent.invoke(CounterHomeEvent.Edit)
+                        onEvent.invoke(CounterEvent.Edit)
                     }
                 )
             }

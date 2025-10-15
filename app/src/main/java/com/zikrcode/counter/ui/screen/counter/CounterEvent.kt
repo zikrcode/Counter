@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_home
+package com.zikrcode.counter.ui.screen.counter
 
-sealed interface CounterHomeEvent {
-    data object Settings : CounterHomeEvent
-    data object List : CounterHomeEvent
-    data object Edit : CounterHomeEvent
-    data object NavigationHandled : CounterHomeEvent
-    data object Reset : CounterHomeEvent
-    data object Increment : CounterHomeEvent
-    data object Decrement : CounterHomeEvent
+sealed interface CounterEvent {
+    data object Settings : CounterEvent
+    data object Counters : CounterEvent
+    data object Increment : CounterEvent
+    data object Reset : CounterEvent
+    data object Decrement : CounterEvent
+    data object Edit : CounterEvent
+    data object NavigationHandled : CounterEvent
 }

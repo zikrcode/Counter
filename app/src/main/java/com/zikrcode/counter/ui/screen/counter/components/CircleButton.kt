@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_home.components
+package com.zikrcode.counter.ui.screen.counter.components
 
 import android.os.Build
 import android.os.VibrationEffect
@@ -31,9 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import com.zikrcode.counter.ui.common.theme.CounterTheme
 import com.zikrcode.counter.ui.utils.AppConstants
+import com.zikrcode.counter.ui.utils.Dimens
 
 @Composable
 fun CircleButton(
@@ -62,7 +62,7 @@ fun CircleButton(
         },
         modifier = modifier.aspectRatio(1f),
         border = BorderStroke(
-            width = 4.dp,
+            width = Dimens.SpacingHalf,
             color = MaterialTheme.colorScheme.primary
         )
     ) {

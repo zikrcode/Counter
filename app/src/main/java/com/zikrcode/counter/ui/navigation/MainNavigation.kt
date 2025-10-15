@@ -18,12 +18,12 @@ package com.zikrcode.counter.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zikrcode.counter.ui.counter_editor.CounterEditorScreen
-import com.zikrcode.counter.ui.counter_home.CounterHomeScreen
+import com.zikrcode.counter.ui.screen.counter.CounterScreen
 import com.zikrcode.counter.ui.counter_list.CounterListScreen
 import com.zikrcode.counter.ui.counter_settings.CounterSettingsScreen
 import kotlinx.serialization.Serializable
@@ -32,62 +32,42 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface AppRoute {
     @Serializable
-    data object CounterHome : AppRoute
+    data object Counter : AppRoute
 
     @Serializable
-    data object CounterList : AppRoute
+    data object Counters : AppRoute
 
     @Serializable
-    data object CounterSettings : AppRoute
+    data object Settings : AppRoute
 
     @Serializable
     data class CounterEditor(val counterId: Int?) : AppRoute
 }
 
-data class NavigationItem(
-    val route: AppRoute,
-    val label: String,
-    val selectedIcon: Painter,
-    val unselectedIcon: Painter = selectedIcon
-)
-
 @Composable
 fun MainNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val startDestination = AppRoute.CounterHome
+    val startDestination = AppRoute.Counter
 
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable<AppRoute.CounterHome> {
-            CounterHomeScreen(
-                onSettingsClick = {
-                    navController.navigateToAppRoute(AppRoute.CounterSettings)
+        composable<AppRoute.Counter> {
+            CounterScreen(
+                onNavigateToSettings = {
+                    navController.navigateToAppRoute(AppRoute.Settings)
                 },
-                onListClick = {
-                    navController.navigateToAppRoute(AppRoute.CounterList)
+                onNavigateToCounters = {
+                    navController.navigateToAppRoute(AppRoute.Counters)
                 },
-                onEditClick = { counterId ->
+                onNavigateToCounterEditor = { counterId ->
                     navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
                 }
             )
         }
-        composable<AppRoute.CounterList> {
-            CounterListScreen(
-                onNavigateBack = {
-                    navController.navigateUp()
-                },
-                onNavigateToCounterHome = {
-                    navController.navigateToAppRoute(AppRoute.CounterHome)
-                },
-                onNavigateToEditCounter = { counterId ->
-                    navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
-                }
-            )
-        }
-        composable<AppRoute.CounterSettings> {
+        composable<AppRoute.Settings> {
             CounterSettingsScreen(
                 onNavigateBack = {
                     navController.navigateUp()
@@ -97,7 +77,19 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 }
             )
         }
-
+        composable<AppRoute.Counters> {
+            CounterListScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onNavigateToCounterHome = {
+                    navController.navigateToAppRoute(AppRoute.Counter)
+                },
+                onNavigateToEditCounter = { counterId ->
+                    navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
+                }
+            )
+        }
         composable<AppRoute.CounterEditor> {
             CounterEditorScreen(
                 onNavigateBack = {
@@ -105,5 +97,11 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 }
             )
         }
+    }
+}
+
+private fun <T : AppRoute> NavHostController.navigateToAppRoute(route: T) {
+    navigate(route) {
+        popUpTo(route)
     }
 }

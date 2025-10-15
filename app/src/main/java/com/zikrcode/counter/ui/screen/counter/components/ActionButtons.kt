@@ -1,4 +1,4 @@
-package com.zikrcode.counter.ui.counter_home.components
+package com.zikrcode.counter.ui.screen.counter.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.zikrcode.counter.R
@@ -35,13 +34,13 @@ fun CounterActionButtons(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSingleHalf),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpacingSingle),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedButtonActionButton(
             onClick = onResetClick,
             icon = Icons.Default.Replay,
-            iconDescription = stringResource(R.string.reset)
+            iconDescription = stringResource(R.string.reset_counter)
         )
         val largeSize = ButtonDefaults.LargeContainerHeight
         FilledTonalButton(
@@ -60,7 +59,7 @@ fun CounterActionButtons(
         OutlinedButtonActionButton(
             onClick = onEditClick,
             icon = Icons.Default.Edit,
-            iconDescription = stringResource(R.string.edit)
+            iconDescription = stringResource(R.string.edit_counter)
         )
     }
 }
@@ -90,7 +89,7 @@ private fun OutlinedButtonActionButton(
 
 @PreviewLightDark
 @Composable
-private fun CounterActionButtonsPreview() {
+private fun ActionButtonsPreview() {
     CounterTheme {
         Surface {
             CounterActionButtons(

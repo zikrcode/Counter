@@ -140,7 +140,7 @@ fun CounterListItem(
                 AppIconButton(
                     onClick = onEditClick,
                     icon = Icons.Outlined.Edit,
-                    iconDescription = stringResource(R.string.edit),
+                    iconDescription = stringResource(R.string.edit_counter),
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -149,7 +149,7 @@ fun CounterListItem(
                 AppIconButton(
                     onClick = onDeleteClick,
                     icon = Icons.Outlined.Delete,
-                    iconDescription = stringResource(R.string.edit),
+                    iconDescription = stringResource(R.string.edit_counter),
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
                         contentColor = MaterialTheme.colorScheme.error
