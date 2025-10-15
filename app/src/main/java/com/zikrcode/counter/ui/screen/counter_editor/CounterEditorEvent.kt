@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_editor
+package com.zikrcode.counter.ui.screen.counter_editor
 
 sealed interface CounterEditorEvent {
+    data object GoBack : CounterEditorEvent
     data object RestoreCounter : CounterEditorEvent
     data class NameChanged(val name: String) : CounterEditorEvent
     data class DescriptionChanged(val description: String) : CounterEditorEvent
     data class ValueChanged(val value: Int) : CounterEditorEvent
-    data object MessageShown : CounterEditorEvent
-
-    data object GoBack : CounterEditorEvent
     data object Cancel : CounterEditorEvent
     data object Save : CounterEditorEvent
+    data object MessageShown : CounterEditorEvent
+    data object NavigationHandled : CounterEditorEvent
 }

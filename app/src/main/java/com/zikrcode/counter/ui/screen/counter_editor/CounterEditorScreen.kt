@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_editor
+package com.zikrcode.counter.ui.screen.counter_editor
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,7 +47,7 @@ import com.zikrcode.counter.R
 import com.zikrcode.counter.ui.common.composables.AppIconButton
 import com.zikrcode.counter.ui.common.composables.AppScreenContent
 import com.zikrcode.counter.ui.common.theme.CounterTheme
-import com.zikrcode.counter.ui.counter_editor.component.CounterEditorForm
+import com.zikrcode.counter.ui.screen.counter_editor.component.CounterEditorForm
 import com.zikrcode.counter.ui.utils.Dimens
 import com.zikrcode.counter.ui.utils.UiText
 
@@ -67,6 +67,7 @@ fun CounterEditorScreen(
                 // no-op
             }
         }
+        viewModel.onEvent(CounterEditorEvent.NavigationHandled)
     }
 
     CounterEditorScreenContent(

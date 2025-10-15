@@ -26,30 +26,28 @@
     <string name="decrement">Decrement</string>
     <string name="edit_counter">Edit counter</string>
 
+    <string name="new_counter">New counter</string>
+    <string name="go_back">Go back</string>
+    <string name="restore_counter">Restore counter</string>
+    <string name="counter_name">Name</string>
+    <string name="counter_description">Description</string>
+    <string name="counter_value">Value</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+
+
     <!-- MainActivity -->
     <string name="counter_home">Counter</string>
 
-        <!-- CounterListScreen -->
-        <string name="counter_order">Counter Order</string>
-        <string name="delete">Delete</string>
-        <string name="add">Add</string>
+    <!-- CounterListScreen -->
+    <string name="counter_order">Counter Order</string>
+    <string name="delete">Delete</string>
+    <string name="add">Add</string>
 
-            <!-- CounterListViewModel -->
-            <string name="current_counter_in_use">Current counter is in use!</string>
-
-
-        <!-- AddEditCounterScreen -->
-        <string name="new_counter">New counter</string>
-        <string name="go_back">Go back</string>
-        <string name="restore_counter">Restore counter</string>
-        <string name="cancel">Cancel</string>
-        <string name="save">Save</string>
-
-            <!-- AddCounterForm -->
+    <!-- CounterListViewModel -->
+    <string name="current_counter_in_use">Current counter is in use!</string>
+    <!-- AddCounterForm -->
     <string name="basic_information">Basic Information</string>
-            <string name="counter_name">Name</string>
-            <string name="counter_value">Value</string>
-            <string name="counter_description">Description</string>
     <string name="description_placeholder">Add a description for your counter...</string>
 
 

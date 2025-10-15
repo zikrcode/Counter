@@ -22,10 +22,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.zikrcode.counter.ui.counter_editor.CounterEditorScreen
 import com.zikrcode.counter.ui.screen.counter.CounterScreen
 import com.zikrcode.counter.ui.counter_list.CounterListScreen
 import com.zikrcode.counter.ui.counter_settings.CounterSettingsScreen
+import com.zikrcode.counter.ui.screen.counter_editor.CounterEditorScreen
 import kotlinx.serialization.Serializable
 
 // Routes

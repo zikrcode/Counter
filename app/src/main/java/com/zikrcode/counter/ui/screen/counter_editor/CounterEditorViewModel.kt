@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_editor
+package com.zikrcode.counter.ui.screen.counter_editor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -86,6 +86,11 @@ class CounterEditorViewModel @Inject constructor(
     }
 
     fun onEvent(event: CounterEditorEvent) = when (event) {
+        CounterEditorEvent.GoBack, CounterEditorEvent.Cancel -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterEditorNavTarget.NavigateBack)
+            }
+        }
         CounterEditorEvent.RestoreCounter -> {
             loadCounter()
         }
@@ -102,16 +107,6 @@ class CounterEditorViewModel @Inject constructor(
         is CounterEditorEvent.ValueChanged -> {
             _uiState.update { state ->
                 state.copy(counterValue = event.value)
-            }
-        }
-        CounterEditorEvent.MessageShown -> {
-            _uiState.update { state ->
-                state.copy(message = null)
-            }
-        }
-        CounterEditorEvent.GoBack, CounterEditorEvent.Cancel -> {
-            _uiState.update { state ->
-                state.copy(navTarget = CounterEditorNavTarget.NavigateBack)
             }
         }
         CounterEditorEvent.Save -> {
@@ -131,6 +126,16 @@ class CounterEditorViewModel @Inject constructor(
                         state.copy(navTarget = CounterEditorNavTarget.NavigateBack)
                     }
                 }
+            }
+        }
+        CounterEditorEvent.MessageShown -> {
+            _uiState.update { state ->
+                state.copy(message = null)
+            }
+        }
+        CounterEditorEvent.NavigationHandled -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterEditorNavTarget.Idle)
             }
         }
     }

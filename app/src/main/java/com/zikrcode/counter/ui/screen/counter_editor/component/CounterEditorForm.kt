@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_editor.component
+package com.zikrcode.counter.ui.screen.counter_editor.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -103,11 +103,11 @@ private fun CounterEditorFormPreview() {
         Surface {
             CounterEditorForm(
                 counterName = "Sample Counter",
-                onCounterNameChange = {},
+                onCounterNameChange = { },
                 counterDescription = "This is a sample counter description.",
-                onCounterDescriptionChange = {},
+                onCounterDescriptionChange = { },
                 counterValue = 23,
-                onCounterValueChange = {}
+                onCounterValueChange = { }
             )
         }
     }
