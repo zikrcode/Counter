@@ -102,6 +102,8 @@ fun MainNavigation(modifier: Modifier = Modifier) {
 
 private fun <T : AppRoute> NavHostController.navigateToAppRoute(route: T) {
     navigate(route) {
-        popUpTo(route)
+        popUpTo(route) {
+            inclusive = true
+        }
     }
 }
