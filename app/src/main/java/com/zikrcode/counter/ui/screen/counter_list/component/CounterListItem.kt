@@ -47,8 +47,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.zikrcode.counter.R
 import com.zikrcode.counter.domain.model.Counter
-import com.zikrcode.counter.ui.common.composables.AppIconButton
-import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.composables.AppIconButton
+import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.utils.AppConstants
 import com.zikrcode.counter.ui.utils.Dimens
 import java.text.SimpleDateFormat

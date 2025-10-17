@@ -22,7 +22,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.navigation.MainNavigation
 import dagger.hilt.android.AndroidEntryPoint
 

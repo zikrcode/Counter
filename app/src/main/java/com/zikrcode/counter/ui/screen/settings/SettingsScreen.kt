@@ -37,9 +37,9 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.counter.R
-import com.zikrcode.counter.ui.common.composables.AppIconButton
-import com.zikrcode.counter.ui.common.composables.AppScreenContent
-import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.composables.AppIconButton
+import com.zikrcode.counter.ui.composables.AppScreenContent
+import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.screen.settings.components.PreferenceItem
 import com.zikrcode.counter.ui.utils.Dimens
 

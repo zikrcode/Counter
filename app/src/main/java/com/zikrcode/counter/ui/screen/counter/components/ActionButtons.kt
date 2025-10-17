@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.zikrcode.counter.R
-import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.utils.Dimens
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

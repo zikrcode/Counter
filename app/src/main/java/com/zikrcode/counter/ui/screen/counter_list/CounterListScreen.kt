@@ -40,9 +40,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.counter.R
 import com.zikrcode.counter.domain.model.Counter
-import com.zikrcode.counter.ui.common.composables.AppIconButton
-import com.zikrcode.counter.ui.common.composables.AppScreenContent
-import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.composables.AppIconButton
+import com.zikrcode.counter.ui.composables.AppScreenContent
+import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.screen.counter_list.component.CounterListItem
 import com.zikrcode.counter.ui.screen.counter_list.component.CounterListItemHeight
 import com.zikrcode.counter.ui.utils.Dimens

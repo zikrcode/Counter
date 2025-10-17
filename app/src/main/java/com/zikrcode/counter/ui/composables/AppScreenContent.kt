@@ -1,4 +1,4 @@
-package com.zikrcode.counter.ui.common.composables
+package com.zikrcode.counter.ui.composables
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.utils.Dimens
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

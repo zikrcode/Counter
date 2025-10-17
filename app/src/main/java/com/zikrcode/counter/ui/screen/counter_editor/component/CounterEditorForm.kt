@@ -34,7 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.zikrcode.counter.R
-import com.zikrcode.counter.ui.common.theme.CounterTheme
+import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.utils.Dimens
 import com.zikrcode.counter.ui.utils.AppConstants
 
