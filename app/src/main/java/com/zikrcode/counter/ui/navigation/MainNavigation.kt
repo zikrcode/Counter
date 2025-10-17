@@ -23,9 +23,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zikrcode.counter.ui.screen.counter.CounterScreen
-import com.zikrcode.counter.ui.counter_list.CounterListScreen
 import com.zikrcode.counter.ui.counter_settings.CounterSettingsScreen
 import com.zikrcode.counter.ui.screen.counter_editor.CounterEditorScreen
+import com.zikrcode.counter.ui.screen.counter_list.CounterListScreen
 import kotlinx.serialization.Serializable
 
 // Routes
@@ -35,7 +35,7 @@ sealed interface AppRoute {
     data object Counter : AppRoute
 
     @Serializable
-    data object Counters : AppRoute
+    data object CounterList : AppRoute
 
     @Serializable
     data object Settings : AppRoute
@@ -59,8 +59,8 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 onNavigateToSettings = {
                     navController.navigateToAppRoute(AppRoute.Settings)
                 },
-                onNavigateToCounters = {
-                    navController.navigateToAppRoute(AppRoute.Counters)
+                onNavigateToCounterList = {
+                    navController.navigateToAppRoute(AppRoute.CounterList)
                 },
                 onNavigateToCounterEditor = { counterId ->
                     navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
@@ -77,15 +77,15 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 }
             )
         }
-        composable<AppRoute.Counters> {
+        composable<AppRoute.CounterList> {
             CounterListScreen(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
-                onNavigateToCounterHome = {
+                onNavigateToCounter = {
                     navController.navigateToAppRoute(AppRoute.Counter)
                 },
-                onNavigateToEditCounter = { counterId ->
+                onNavigateToCounterEditor = { counterId ->
                     navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
                 }
             )

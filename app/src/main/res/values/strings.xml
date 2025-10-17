@@ -35,20 +35,9 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
 
-
-    <!-- MainActivity -->
-    <string name="counter_home">Counter</string>
-
-    <!-- CounterListScreen -->
     <string name="counter_order">Counter Order</string>
-    <string name="delete">Delete</string>
-    <string name="add">Add</string>
-
-    <!-- CounterListViewModel -->
+    <string name="delete_counter">Delete counter</string>
     <string name="current_counter_in_use">Current counter is in use!</string>
-    <!-- AddCounterForm -->
-    <string name="basic_information">Basic Information</string>
-    <string name="description_placeholder">Add a description for your counter...</string>
 
 
         <!-- CounterSettingsScreen -->

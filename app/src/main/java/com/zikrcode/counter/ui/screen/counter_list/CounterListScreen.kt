@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_list
+package com.zikrcode.counter.ui.screen.counter_list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,16 +43,16 @@ import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.ui.common.composables.AppIconButton
 import com.zikrcode.counter.ui.common.composables.AppScreenContent
 import com.zikrcode.counter.ui.common.theme.CounterTheme
-import com.zikrcode.counter.ui.counter_list.component.CounterListItem
-import com.zikrcode.counter.ui.counter_list.component.CounterListItemHeight
+import com.zikrcode.counter.ui.screen.counter_list.component.CounterListItem
+import com.zikrcode.counter.ui.screen.counter_list.component.CounterListItemHeight
 import com.zikrcode.counter.ui.utils.Dimens
 import com.zikrcode.counter.ui.utils.UiText
 
 @Composable
 fun CounterListScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToCounterHome: () -> Unit,
-    onNavigateToEditCounter: (Int?) -> Unit,
+    onNavigateToCounter: () -> Unit,
+    onNavigateToCounterEditor: (Int?) -> Unit,
     viewModel: CounterListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -62,14 +62,14 @@ fun CounterListScreen(
             CounterListNavTarget.NavigateBack -> {
                 onNavigateBack.invoke()
             }
-            CounterListNavTarget.CounterHome -> {
-                onNavigateToCounterHome.invoke()
+            CounterListNavTarget.Counter -> {
+                onNavigateToCounter.invoke()
             }
-            is CounterListNavTarget.EditCounter -> {
-                onNavigateToEditCounter.invoke(navTarget.id)
+            is CounterListNavTarget.CounterEditor -> {
+                onNavigateToCounterEditor.invoke(navTarget.id)
             }
             CounterListNavTarget.NewCounter -> {
-                onNavigateToEditCounter.invoke(null)
+                onNavigateToCounterEditor.invoke(null)
             }
             CounterListNavTarget.Idle -> {
                 // no-op
@@ -183,7 +183,7 @@ private fun NewCounterFloatingActionButton(
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
-            contentDescription = stringResource(R.string.add),
+            contentDescription = stringResource(R.string.new_counter),
             modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize),
         )
     }

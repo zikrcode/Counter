@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_list.component
+package com.zikrcode.counter.ui.screen.counter_list.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -149,7 +149,7 @@ fun CounterListItem(
                 AppIconButton(
                     onClick = onDeleteClick,
                     icon = Icons.Outlined.Delete,
-                    iconDescription = stringResource(R.string.edit_counter),
+                    iconDescription = stringResource(R.string.delete_counter),
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
                         contentColor = MaterialTheme.colorScheme.error

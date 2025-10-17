@@ -44,7 +44,7 @@ data class CounterUiState(
 
 sealed interface CounterNavTarget {
     data object Settings : CounterNavTarget
-    data object Counters : CounterNavTarget
+    data object CounterList : CounterNavTarget
     data object CounterEditor : CounterNavTarget
     data object Idle : CounterNavTarget
 }
@@ -133,7 +133,7 @@ class CounterViewModel @Inject constructor(
 
         CounterEvent.Counters -> {
             _uiState.update { state ->
-                state.copy(navTarget = CounterNavTarget.Counters)
+                state.copy(navTarget = CounterNavTarget.CounterList)
             }
         }
 

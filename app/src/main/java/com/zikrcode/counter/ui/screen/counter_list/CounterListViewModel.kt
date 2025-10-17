@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_list
+package com.zikrcode.counter.ui.screen.counter_list
 
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.ViewModel
@@ -48,8 +48,8 @@ data class CounterListUiState(
 
 sealed interface CounterListNavTarget {
     data object NavigateBack : CounterListNavTarget
-    data object CounterHome : CounterListNavTarget
-    data class EditCounter(val id: Int) : CounterListNavTarget
+    data object Counter : CounterListNavTarget
+    data class CounterEditor(val id: Int) : CounterListNavTarget
     data object NewCounter : CounterListNavTarget
     data object Idle : CounterListNavTarget
 }
@@ -87,70 +87,77 @@ class CounterListViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun onEvent(event: CounterListEvent) {
-        when (event) {
-            CounterListEvent.ToggleOrderSection -> {
-                // TODO
+    fun onEvent(event: CounterListEvent) = when (event) {
+        CounterListEvent.GoBack -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterListNavTarget.NavigateBack)
             }
-            is CounterListEvent.Order -> {
-                // TODO
-            }
-            is CounterListEvent.Delete -> {
-                viewModelScope.launch {
-                    val currentCounterId = counterUseCases.readUserPreferenceUseCase(
-                        intPreferencesKey(AppConstants.LAST_USED_COUNTER_ID_KEY)
-                    ).first()
-                    if (event.counter.id == currentCounterId) {
-                        _uiState.update { state ->
-                            state.copy(
-                                message = UiText.StringResource(R.string.current_counter_in_use)
-                            )
-                        }
-                    } else {
-                        counterUseCases.deleteCounterUseCase(event.counter)
-                    }
-                }
-            }
-            CounterListEvent.RestoreCounter -> {
-                // TODO RestoreCounter
-            }
-            is CounterListEvent.SnackbarShown -> {
+        }
+
+        CounterListEvent.ToggleOrderSection -> {
+            // TODO
+        }
+
+        is CounterListEvent.Order -> {
+            // TODO
+        }
+
+        is CounterListEvent.SelectCounter -> {
+            viewModelScope.launch {
+                counterUseCases.writeUserPreferenceUseCase(
+                    key = intPreferencesKey(AppConstants.LAST_USED_COUNTER_ID_KEY),
+                    value = event.id
+                )
                 _uiState.update { state ->
-                    state.copy(message = null)
+                    state.copy(navTarget = CounterListNavTarget.Counter)
                 }
             }
-            CounterListEvent.GoBack -> {
-                _uiState.update { state ->
-                    state.copy(navTarget = CounterListNavTarget.NavigateBack)
-                }
+        }
+
+        is CounterListEvent.Edit -> {
+            _uiState.update { state ->
+                state.copy(
+                    navTarget = CounterListNavTarget.CounterEditor(event.id)
+                )
             }
-            is CounterListEvent.SelectCounter -> {
-                viewModelScope.launch {
-                    counterUseCases.writeUserPreferenceUseCase(
-                        key = intPreferencesKey(AppConstants.LAST_USED_COUNTER_ID_KEY),
-                        value = event.id
-                    )
+        }
+
+        is CounterListEvent.Delete -> {
+            viewModelScope.launch {
+                val currentCounterId = counterUseCases.readUserPreferenceUseCase(
+                    intPreferencesKey(AppConstants.LAST_USED_COUNTER_ID_KEY)
+                ).first()
+                if (event.counter.id == currentCounterId) {
                     _uiState.update { state ->
-                        state.copy(navTarget = CounterListNavTarget.CounterHome)
+                        state.copy(
+                            message = UiText.StringResource(R.string.current_counter_in_use)
+                        )
                     }
+                } else {
+                    counterUseCases.deleteCounterUseCase(event.counter)
                 }
             }
-            is CounterListEvent.Edit -> {
-                _uiState.update { state ->
-                    state.copy(
-                        navTarget = CounterListNavTarget.EditCounter(event.id)
-                    )
-                }
+        }
+
+        CounterListEvent.NewCounter -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterListNavTarget.NewCounter)
             }
-            CounterListEvent.NewCounter -> {
-                _uiState.update { state ->
-                    state.copy(navTarget = CounterListNavTarget.NewCounter)
-                }
+        }
+
+        CounterListEvent.RestoreCounter -> {
+            // TODO RestoreCounter
+        }
+
+        is CounterListEvent.SnackbarShown -> {
+            _uiState.update { state ->
+                state.copy(message = null)
             }
-            CounterListEvent.NavigationHandled -> {
-                _uiState.update { state ->
-                    state.copy(navTarget = CounterListNavTarget.Idle)
-                }
+        }
+
+        CounterListEvent.NavigationHandled -> {
+            _uiState.update { state ->
+                state.copy(navTarget = CounterListNavTarget.Idle)
             }
         }
     }

@@ -48,7 +48,7 @@ import com.zikrcode.counter.ui.counter_settings.ChangeScreenVisibility
 @Composable
 fun CounterScreen(
     onNavigateToSettings: () -> Unit,
-    onNavigateToCounters: () -> Unit,
+    onNavigateToCounterList: () -> Unit,
     onNavigateToCounterEditor: (Int) -> Unit,
     viewModel: CounterViewModel = hiltViewModel()
 ) {
@@ -59,8 +59,8 @@ fun CounterScreen(
             CounterNavTarget.Settings -> {
                 onNavigateToSettings.invoke()
             }
-            CounterNavTarget.Counters -> {
-                onNavigateToCounters.invoke()
+            CounterNavTarget.CounterList -> {
+                onNavigateToCounterList.invoke()
             }
             CounterNavTarget.CounterEditor -> {
                 uiState.counter?.id?.let {
