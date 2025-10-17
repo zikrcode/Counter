@@ -23,7 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zikrcode.counter.ui.screen.counter.CounterScreen
-import com.zikrcode.counter.ui.counter_settings.CounterSettingsScreen
+import com.zikrcode.counter.ui.screen.settings.SettingsScreen
 import com.zikrcode.counter.ui.screen.counter_editor.CounterEditorScreen
 import com.zikrcode.counter.ui.screen.counter_list.CounterListScreen
 import kotlinx.serialization.Serializable
@@ -67,16 +67,6 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 }
             )
         }
-        composable<AppRoute.Settings> {
-            CounterSettingsScreen(
-                onNavigateBack = {
-                    navController.navigateUp()
-                },
-                onNavigateToAbout = {
-                    // TODO: Implement navigation to About screen
-                }
-            )
-        }
         composable<AppRoute.CounterList> {
             CounterListScreen(
                 onNavigateBack = {
@@ -87,6 +77,16 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 },
                 onNavigateToCounterEditor = { counterId ->
                     navController.navigateToAppRoute(AppRoute.CounterEditor(counterId))
+                }
+            )
+        }
+        composable<AppRoute.Settings> {
+            SettingsScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onNavigateToAbout = {
+                    // TODO: Implement navigation to About screen
                 }
             )
         }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_settings
+package com.zikrcode.counter.ui.screen.settings
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.lifecycle.ViewModel
@@ -28,25 +28,25 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class CounterSettingsUiState(
+data class SettingsUiState(
     val isLoading: Boolean = false,
     val vibrateOnTap: Boolean = false,
     val keepScreenOn: Boolean = false,
-    val navTarget: CounterSettingsNavTarget = CounterSettingsNavTarget.Idle
+    val navTarget: SettingsNavTarget = SettingsNavTarget.Idle
 )
 
-sealed interface CounterSettingsNavTarget {
-    data object NavigateBack : CounterSettingsNavTarget
-    data object About : CounterSettingsNavTarget
-    data object Idle : CounterSettingsNavTarget
+sealed interface SettingsNavTarget {
+    data object NavigateBack : SettingsNavTarget
+    data object About : SettingsNavTarget
+    data object Idle : SettingsNavTarget
 }
 
 @HiltViewModel
-class CounterSettingsViewModel @Inject constructor(
+class SettingsViewModel @Inject constructor(
     private val counterUseCases: CounterUseCases
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CounterSettingsUiState())
+    private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -86,38 +86,40 @@ class CounterSettingsViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: CounterSettingsEvent) {
-        when (event) {
-            CounterSettingsEvent.VibrateOnTapPreferenceChanged -> {
-                viewModelScope.launch {
-                    counterUseCases.writeUserPreferenceUseCase(
-                        key = booleanPreferencesKey(PreferencesKey.VIBRATE_PREF_KEY),
-                        value = !_uiState.value.vibrateOnTap
-                    )
-                }
+    fun onEvent(event: SettingsEvent) = when (event) {
+        SettingsEvent.GoBack -> {
+            _uiState.update { state ->
+                state.copy(navTarget = SettingsNavTarget.NavigateBack)
             }
-            CounterSettingsEvent.KeepScreenOnPreferenceChanged -> {
-                viewModelScope.launch {
-                    counterUseCases.writeUserPreferenceUseCase(
-                        key = booleanPreferencesKey(PreferencesKey.KEEP_SCREEN_ON_PREF_KEY),
-                        value = !_uiState.value.keepScreenOn
-                    )
-                }
+        }
+
+        SettingsEvent.About -> {
+            _uiState.update { state ->
+                state.copy(navTarget = SettingsNavTarget.About)
             }
-            CounterSettingsEvent.GoBack -> {
-                _uiState.update { state ->
-                    state.copy(navTarget = CounterSettingsNavTarget.NavigateBack)
-                }
+        }
+
+        SettingsEvent.VibrateOnTapPreferenceChanged -> {
+            viewModelScope.launch {
+                counterUseCases.writeUserPreferenceUseCase(
+                    key = booleanPreferencesKey(PreferencesKey.VIBRATE_PREF_KEY),
+                    value = !_uiState.value.vibrateOnTap
+                )
             }
-            CounterSettingsEvent.About -> {
-                _uiState.update { state ->
-                    state.copy(navTarget = CounterSettingsNavTarget.About)
-                }
+        }
+
+        SettingsEvent.KeepScreenOnPreferenceChanged -> {
+            viewModelScope.launch {
+                counterUseCases.writeUserPreferenceUseCase(
+                    key = booleanPreferencesKey(PreferencesKey.KEEP_SCREEN_ON_PREF_KEY),
+                    value = !_uiState.value.keepScreenOn
+                )
             }
-            CounterSettingsEvent.NavigationHandled -> {
-                _uiState.update { state ->
-                    state.copy(navTarget = CounterSettingsNavTarget.Idle)
-                }
+        }
+
+        SettingsEvent.NavigationHandled -> {
+            _uiState.update { state ->
+                state.copy(navTarget = SettingsNavTarget.Idle)
             }
         }
     }

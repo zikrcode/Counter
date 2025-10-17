@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_settings
+package com.zikrcode.counter.ui.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,48 +40,48 @@ import com.zikrcode.counter.R
 import com.zikrcode.counter.ui.common.composables.AppIconButton
 import com.zikrcode.counter.ui.common.composables.AppScreenContent
 import com.zikrcode.counter.ui.common.theme.CounterTheme
-import com.zikrcode.counter.ui.counter_settings.components.PreferenceItem
+import com.zikrcode.counter.ui.screen.settings.components.PreferenceItem
 import com.zikrcode.counter.ui.utils.Dimens
 
 @Composable
-fun CounterSettingsScreen(
+fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToAbout: () -> Unit,
-    viewModel: CounterSettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.navTarget) {
         when (uiState.navTarget) {
-            CounterSettingsNavTarget.NavigateBack -> {
+            SettingsNavTarget.NavigateBack -> {
                 onNavigateBack.invoke()
             }
-            CounterSettingsNavTarget.About -> {
+            SettingsNavTarget.About -> {
                 onNavigateToAbout.invoke()
             }
-            CounterSettingsNavTarget.Idle -> {
+            SettingsNavTarget.Idle -> {
                 // no-op
             }
         }
-        viewModel.onEvent(CounterSettingsEvent.NavigationHandled)
+        viewModel.onEvent(SettingsEvent.NavigationHandled)
     }
 
-    CounterSettingsScreenContent(
+    SettingsScreenContent(
         isLoading = uiState.isLoading,
         vibrateOnTap = uiState.vibrateOnTap,
         keepScreenOn = uiState.keepScreenOn,
         onEvent = viewModel::onEvent
     )
 
-    // to make preview work it is placed outside CounterSettingsScreenContent
+    // to make preview work it is placed outside SettingsScreenContent
     ChangeScreenVisibility(uiState.keepScreenOn)
 }
 
 @PreviewLightDark
 @Composable
-fun CounterSettingsContentPreview() {
+private fun SettingsContentPreview() {
     CounterTheme {
-        CounterSettingsScreenContent(
+        SettingsScreenContent(
             isLoading = false,
             vibrateOnTap = false,
             keepScreenOn = false,
@@ -91,18 +91,18 @@ fun CounterSettingsContentPreview() {
 }
 
 @Composable
-private fun CounterSettingsScreenContent(
+private fun SettingsScreenContent(
     isLoading: Boolean,
     vibrateOnTap: Boolean,
     keepScreenOn: Boolean,
-    onEvent: (CounterSettingsEvent) -> Unit
+    onEvent: (SettingsEvent) -> Unit
 ) {
     AppScreenContent(
         title = stringResource(R.string.settings),
         topBarStartIcon = {
             AppIconButton(
                 onClick = {
-                    onEvent.invoke(CounterSettingsEvent.GoBack)
+                    onEvent.invoke(SettingsEvent.GoBack)
                 },
                 icon = Icons.AutoMirrored.Outlined.ArrowBack,
                 iconDescription = stringResource(R.string.go_back)
@@ -111,7 +111,7 @@ private fun CounterSettingsScreenContent(
         topBarEndIcon = {
             AppIconButton(
                 onClick = {
-                    onEvent.invoke(CounterSettingsEvent.About)
+                    onEvent.invoke(SettingsEvent.About)
                 },
                 icon = Icons.Outlined.Info,
                 iconDescription = stringResource(R.string.about)
@@ -131,7 +131,7 @@ private fun CounterSettingsScreenContent(
                         description = stringResource(R.string.vibrate_on_tap_description),
                         checked = vibrateOnTap
                     ) {
-                        onEvent.invoke(CounterSettingsEvent.VibrateOnTapPreferenceChanged)
+                        onEvent.invoke(SettingsEvent.VibrateOnTapPreferenceChanged)
                     }
                     HorizontalDivider()
                     PreferenceItem(
@@ -140,7 +140,7 @@ private fun CounterSettingsScreenContent(
                         description = stringResource(R.string.keep_screen_on_description),
                         checked = keepScreenOn
                     ) {
-                        onEvent.invoke(CounterSettingsEvent.KeepScreenOnPreferenceChanged)
+                        onEvent.invoke(SettingsEvent.KeepScreenOnPreferenceChanged)
                     }
                 }
             }

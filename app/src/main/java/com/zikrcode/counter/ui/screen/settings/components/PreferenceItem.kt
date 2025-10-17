@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_settings.components
+package com.zikrcode.counter.ui.screen.settings.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,11 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import com.zikrcode.counter.R
 import com.zikrcode.counter.ui.common.theme.CounterTheme
 import com.zikrcode.counter.ui.utils.Dimens
 
@@ -96,8 +94,8 @@ private fun PreferenceItemPreview() {
         Surface {
             PreferenceItem(
                 icon = Icons.Outlined.Settings,
-                name = stringResource(R.string.name),
-                description = stringResource(R.string.description),
+                name = "Name",
+                description = "Description",
                 checked = false,
                 onCheckedChange = { }
             )

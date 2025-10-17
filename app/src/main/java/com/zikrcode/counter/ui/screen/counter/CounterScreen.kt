@@ -43,7 +43,7 @@ import com.zikrcode.counter.ui.common.theme.CounterTheme
 import com.zikrcode.counter.ui.screen.counter.components.CircleButton
 import com.zikrcode.counter.ui.screen.counter.components.CounterActionButtons
 import com.zikrcode.counter.ui.screen.counter.components.NoCounterAvailable
-import com.zikrcode.counter.ui.counter_settings.ChangeScreenVisibility
+import com.zikrcode.counter.ui.screen.settings.ChangeScreenVisibility
 
 @Composable
 fun CounterScreen(

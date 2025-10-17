@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.domain.use_case.CounterUseCases
-import com.zikrcode.counter.ui.counter_settings.PreferencesKey
+import com.zikrcode.counter.ui.screen.settings.PreferencesKey
 import com.zikrcode.counter.ui.utils.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

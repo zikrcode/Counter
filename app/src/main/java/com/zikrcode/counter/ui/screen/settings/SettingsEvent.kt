@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_settings
+package com.zikrcode.counter.ui.screen.settings
 
-sealed interface CounterSettingsEvent {
-    data object VibrateOnTapPreferenceChanged : CounterSettingsEvent
-    data object KeepScreenOnPreferenceChanged : CounterSettingsEvent
-
-    data object GoBack : CounterSettingsEvent
-    data object About : CounterSettingsEvent
-    data object NavigationHandled : CounterSettingsEvent
+sealed interface SettingsEvent {
+    data object GoBack : SettingsEvent
+    data object About : SettingsEvent
+    data object VibrateOnTapPreferenceChanged : SettingsEvent
+    data object KeepScreenOnPreferenceChanged : SettingsEvent
+    data object NavigationHandled : SettingsEvent
 }

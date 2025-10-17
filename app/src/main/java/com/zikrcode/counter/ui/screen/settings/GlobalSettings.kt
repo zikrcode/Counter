@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-package com.zikrcode.counter.ui.counter_settings
+package com.zikrcode.counter.ui.screen.settings
 
-object PreferencesKey {
-    const val VIBRATE_PREF_KEY = "vibrate"
-    const val KEEP_SCREEN_ON_PREF_KEY = "keep_screen_on"
+import android.app.Activity
+import android.view.WindowManager
+import androidx.activity.compose.LocalActivity
+import androidx.compose.runtime.Composable
+
+@Composable
+fun ChangeScreenVisibility(keepScreenOn: Boolean) {
+    val activity: Activity = LocalActivity.current ?: return
+    if (keepScreenOn) {
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    } else {
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
 }

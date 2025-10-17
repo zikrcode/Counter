@@ -34,25 +34,16 @@
     <string name="counter_value">Value</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="empty_counter_name">Counter name can not be empty!</string>
 
     <string name="counter_order">Counter Order</string>
     <string name="delete_counter">Delete counter</string>
     <string name="current_counter_in_use">Current counter is in use!</string>
 
-
-        <!-- CounterSettingsScreen -->
-        <string name="about">About</string>
-        <string name="vibrate_on_tap_name">Vibrate on Tap</string>
-        <string name="vibrate_on_tap_description">Vibrate on value change</string>
-        <string name="keep_screen_on_name">Keep Screen On</string>
-        <string name="keep_screen_on_description">Keep the screen on while app is active</string>
-
-            <!-- PreferenceItem -->
-            <string name="name">Name</string>
-            <string name="description">Description</string>
-
-    <!-- InsertCounterUseCase -->
-    <string name="empty_counter_name">Counter name can not be empty!</string>
-    <string name="invalid_counter_value">Invalid counter value!</string>
+    <string name="about">About</string>
+    <string name="vibrate_on_tap_name">Vibrate on Tap</string>
+    <string name="vibrate_on_tap_description">Vibrate on value change</string>
+    <string name="keep_screen_on_name">Keep Screen On</string>
+    <string name="keep_screen_on_description">Keep the screen on while app is active</string>
 
 </resources>
