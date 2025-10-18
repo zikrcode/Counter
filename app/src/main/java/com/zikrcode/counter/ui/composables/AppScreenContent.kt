@@ -52,13 +52,14 @@ fun AppScreenContent(
                     startIcon = topBarStartIcon,
                     endIcon = topBarEndIcon
                 )
-                HorizontalDivider()
+                HorizontalDivider(color = CounterTheme.colorScheme.divider)
             }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
-        floatingActionButton = floatingActionButton
+        floatingActionButton = floatingActionButton,
+        containerColor = CounterTheme.colorScheme.background
     ) { paddingValues ->
         Box(
             modifier = modifier
@@ -68,7 +69,10 @@ fun AppScreenContent(
             contentAlignment = Alignment.Center
         ) {
             if (loading) {
-                CircularWavyProgressIndicator()
+                CircularWavyProgressIndicator(
+                    color = CounterTheme.colorScheme.main,
+                    trackColor = CounterTheme.colorScheme.mainVariant
+                )
             } else {
                 content()
             }

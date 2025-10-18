@@ -16,6 +16,7 @@
 
 package com.zikrcode.counter.ui
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,12 +38,17 @@ class MainActivity : ComponentActivity() {
                 MainActivityContent()
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // to have completely transparent navigation bar without any scrim color applied
+            window.isNavigationBarContrastEnforced = false
+        }
     }
 }
 
 @Composable
 private fun MainActivityContent() {
-    Surface {
+    Surface(color = CounterTheme.colorScheme.background) {
         MainNavigation()
     }
 }

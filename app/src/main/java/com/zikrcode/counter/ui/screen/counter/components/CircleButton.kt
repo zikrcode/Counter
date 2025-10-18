@@ -22,6 +22,7 @@ import android.os.Vibrator
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,9 +62,13 @@ fun CircleButton(
             onClick.invoke()
         },
         modifier = modifier.aspectRatio(1f),
+        colors = ButtonDefaults.elevatedButtonColors().copy(
+            containerColor = CounterTheme.colorScheme.background,
+            contentColor = CounterTheme.colorScheme.main,
+        ),
         border = BorderStroke(
             width = Dimens.SpacingHalf,
-            color = MaterialTheme.colorScheme.primary
+            color = CounterTheme.colorScheme.main
         )
     ) {
         Text(
