@@ -51,7 +51,7 @@ fun CounterActionButtons(
             modifier = modifier.heightIn(largeSize),
             colors = ButtonDefaults.filledTonalButtonColors().copy(
                 containerColor = CounterTheme.colorScheme.mainVariant,
-                contentColor = CounterTheme.colorScheme.icon
+                contentColor = CounterTheme.colorScheme.iconDark
             ),
             contentPadding = ButtonDefaults.contentPaddingFor(largeSize),
         ) {

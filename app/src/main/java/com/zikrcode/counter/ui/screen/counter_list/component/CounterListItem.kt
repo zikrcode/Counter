@@ -16,7 +16,7 @@
 
 package com.zikrcode.counter.ui.screen.counter_list.component
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,15 +31,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,9 +68,13 @@ fun CounterListItem(
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedCard(
+    ElevatedCard(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        colors = CardDefaults.elevatedCardColors().copy(
+            containerColor = CounterTheme.colorScheme.container,
+            contentColor = Color.Unspecified,
+        )
     ) {
         Row(
             modifier = Modifier
@@ -92,7 +98,7 @@ fun CounterListItem(
                     Column {
                         Text(
                             text = counter.counterName,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = CounterTheme.colorScheme.text,
                             fontWeight = FontWeight.Bold,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
@@ -101,7 +107,7 @@ fun CounterListItem(
                         if (counter.counterDescription.isNotBlank()) {
                             Text(
                                 text = counter.counterDescription,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = CounterTheme.colorScheme.text,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 3,
                                 style = MaterialTheme.typography.bodyMedium
@@ -111,7 +117,7 @@ fun CounterListItem(
                 }
                 Text(
                     text = formatDate(counter.counterDate),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    color = CounterTheme.colorScheme.text.copy(alpha = 0.7f),
                     maxLines = 1,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -121,12 +127,16 @@ fun CounterListItem(
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CircleShape)
-                    .background(color = MaterialTheme.colorScheme.primaryContainer),
+                    .border(
+                        width = 1.dp,
+                        shape = CircleShape,
+                        color = CounterTheme.colorScheme.divider
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = counter.counterSavedValue.toString(),
-                    color = MaterialTheme.colorScheme.primary,
+                    color = CounterTheme.colorScheme.main,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     style = MaterialTheme.typography.labelLarge
@@ -142,8 +152,8 @@ fun CounterListItem(
                     icon = Icons.Outlined.Edit,
                     iconDescription = stringResource(R.string.edit_counter),
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        containerColor = CounterTheme.colorScheme.background,
+                        contentColor = CounterTheme.colorScheme.icon
                     )
                 )
                 AppIconButton(
@@ -151,8 +161,8 @@ fun CounterListItem(
                     icon = Icons.Outlined.Delete,
                     iconDescription = stringResource(R.string.delete_counter),
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
-                        contentColor = MaterialTheme.colorScheme.error
+                        containerColor = CounterTheme.colorScheme.background,
+                        contentColor = CounterTheme.colorScheme.red
                     )
                 )
             }

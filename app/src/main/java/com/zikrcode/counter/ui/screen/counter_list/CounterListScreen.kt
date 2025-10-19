@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.counter.R
@@ -145,11 +146,17 @@ private fun CounterListContent(
         snackbarMessage = message?.asString(),
         onSnackbarShown = {
             onEvent.invoke(CounterListEvent.SnackbarShown)
-        }
+        },
+        contentPadding = PaddingValues(0.dp)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = CounterListItemHeight),
+            contentPadding = PaddingValues(
+                start = Dimens.SpacingDouble,
+                top = Dimens.SpacingDouble,
+                end = Dimens.SpacingDouble,
+                bottom = CounterListItemHeight
+            ),
             verticalArrangement = Arrangement.spacedBy(Dimens.SpacingDouble)
         ) {
             items(counters) { counter ->
@@ -179,7 +186,9 @@ private fun NewCounterFloatingActionButton(
 ) {
     MediumFloatingActionButton(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        containerColor = CounterTheme.colorScheme.mainVariant,
+        contentColor = CounterTheme.colorScheme.iconDark
     ) {
         Icon(
             imageVector = Icons.Filled.Add,

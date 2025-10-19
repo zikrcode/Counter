@@ -21,7 +21,9 @@ import androidx.compose.ui.graphics.Color
 
 object CounterColor {
     val MAIN = Color(0xFF29BF12)
-    val MAIN_LIGHT = Color(0xFFABFF4F)
+    val MAIN_VARIANT = Color(0xFFABFF4F)
+    val MAIN_LIGHT = Color(0xFF4ACF22)
+    val MAIN_LIGHT_VARIANT = Color(0xFF8BEF40)
     val DR_WHITE = Color(0xFFFAFAFA)
     val BRIGHT_GRAY = Color(0xFFEAEAEA)
     val AMETHYST_HAZE = Color(0xFFA1A1AA)
@@ -43,6 +45,7 @@ data class CounterColorScheme(
     val container: Color,
     val divider: Color,
     val icon: Color,
+    val iconDark: Color,
     val main: Color,
     val mainVariant: Color,
     val red: Color,
@@ -54,8 +57,9 @@ val LightCounterColorScheme = CounterColorScheme(
     container = CounterColor.BRIGHT_GRAY,
     divider = CounterColor.AMETHYST_HAZE,
     icon = CounterColor.DARK_GRAY,
+    iconDark = CounterColor.DARK_GRAY,
     main = CounterColor.MAIN,
-    mainVariant = CounterColor.MAIN.copy(alpha = .5f),
+    mainVariant = CounterColor.MAIN_VARIANT,
     red = CounterColor.RUSTY_RED,
     text = CounterColor.DARK_GRAY
 )
@@ -65,8 +69,9 @@ val DarkCounterColorScheme = CounterColorScheme(
     container = CounterColor.ONYX,
     divider = CounterColor.DRACULA_ORCHID,
     icon = CounterColor.WHITE,
+    iconDark = CounterColor.DARK_GRAY,
     main = CounterColor.MAIN_LIGHT,
-    mainVariant = CounterColor.MAIN_LIGHT.copy(alpha = .5f),
+    mainVariant = CounterColor.MAIN_LIGHT_VARIANT,
     red = CounterColor.PARADISE_PINK,
     text = CounterColor.WHITE
 )
