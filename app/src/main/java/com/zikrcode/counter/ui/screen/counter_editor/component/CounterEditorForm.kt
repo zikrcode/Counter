@@ -16,6 +16,8 @@
 
 package com.zikrcode.counter.ui.screen.counter_editor.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,9 +25,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -58,7 +62,8 @@ fun CounterEditorForm(
                     Text(text = stringResource(R.string.counter_name))
                 },
                 singleLine = true,
-                maxLines = 1
+                maxLines = 1,
+                colors = editorTextFieldColors()
             )
             Spacer(Modifier.width(Dimens.SpacingDouble))
             OutlinedTextField(
@@ -78,7 +83,8 @@ fun CounterEditorForm(
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
-                maxLines = 1
+                maxLines = 1,
+                colors = editorTextFieldColors()
             )
         }
         OutlinedTextField(
@@ -91,20 +97,40 @@ fun CounterEditorForm(
                 Text(text = stringResource(R.string.counter_description))
             },
             maxLines = 4,
-            minLines = 4
+            minLines = 4,
+            colors = editorTextFieldColors()
         )
     }
 }
+
+@Composable
+fun editorTextFieldColors(): TextFieldColors = OutlinedTextFieldDefaults.colors().copy(
+    focusedTextColor = CounterTheme.colorScheme.text,
+    unfocusedTextColor = CounterTheme.colorScheme.text,
+    cursorColor = CounterTheme.colorScheme.main,
+    textSelectionColors = TextSelectionColors(
+        handleColor = CounterTheme.colorScheme.main,
+        backgroundColor = CounterTheme.colorScheme.mainVariant,
+    ),
+    focusedIndicatorColor = CounterTheme.colorScheme.main,
+    unfocusedIndicatorColor = CounterTheme.colorScheme.text,
+    focusedLabelColor = CounterTheme.colorScheme.main,
+    unfocusedLabelColor = CounterTheme.colorScheme.text
+)
 
 @PreviewLightDark
 @Composable
 private fun CounterEditorFormPreview() {
     CounterTheme {
-        Surface {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(CounterTheme.colorScheme.background)
+        ) {
             CounterEditorForm(
                 counterName = "Sample Counter",
                 onCounterNameChange = { },
-                counterDescription = "This is a sample counter description.",
+                counterDescription = "",
                 onCounterDescriptionChange = { },
                 counterValue = 23,
                 onCounterValueChange = { }

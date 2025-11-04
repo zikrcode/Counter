@@ -26,12 +26,14 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Brightness5
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Vibration
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -83,7 +85,7 @@ private fun SettingsContentPreview() {
     CounterTheme {
         SettingsScreenContent(
             isLoading = false,
-            vibrateOnTap = false,
+            vibrateOnTap = true,
             keepScreenOn = false,
             onEvent = { }
         )
@@ -120,7 +122,12 @@ private fun SettingsScreenContent(
         loading = isLoading
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            ElevatedCard{
+            ElevatedCard(
+                colors = CardDefaults.elevatedCardColors().copy(
+                    containerColor = CounterTheme.colorScheme.container,
+                    contentColor = Color.Unspecified,
+                )
+            ) {
                 Column(
                     modifier = Modifier.padding(Dimens.SpacingDouble),
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSingle),
@@ -133,7 +140,7 @@ private fun SettingsScreenContent(
                     ) {
                         onEvent.invoke(SettingsEvent.VibrateOnTapPreferenceChanged)
                     }
-                    HorizontalDivider()
+                    HorizontalDivider(color = CounterTheme.colorScheme.divider)
                     PreferenceItem(
                         icon = Icons.Outlined.Brightness5,
                         name = stringResource(R.string.keep_screen_on_name),

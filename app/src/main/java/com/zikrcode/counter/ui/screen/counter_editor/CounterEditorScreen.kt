@@ -39,6 +39,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -168,7 +170,14 @@ private fun CounterEditorScreenContent(
                     onClick = {
                         onEvent.invoke(CounterEditorEvent.Cancel)
                     },
-                    shape = ButtonDefaults.squareShape
+                    shape = ButtonDefaults.squareShape,
+                    colors = ButtonDefaults.outlinedButtonColors().copy(
+                        containerColor = Color.Transparent,
+                        contentColor = CounterTheme.colorScheme.text,
+                    ),
+                    border = ButtonDefaults.outlinedButtonBorder(true).copy(
+                        brush = SolidColor(CounterTheme.colorScheme.divider)
+                    )
                 ) {
                     Text(text = stringResource(R.string.cancel))
                 }
@@ -176,7 +185,11 @@ private fun CounterEditorScreenContent(
                     onClick = {
                         onEvent.invoke(CounterEditorEvent.Save)
                     },
-                    shape = ButtonDefaults.squareShape
+                    shape = ButtonDefaults.squareShape,
+                    colors = ButtonDefaults.filledTonalButtonColors().copy(
+                        containerColor = CounterTheme.colorScheme.main,
+                        contentColor = CounterTheme.colorScheme.iconLight
+                    ),
                 ) {
                     Text(text = stringResource(R.string.save))
                 }

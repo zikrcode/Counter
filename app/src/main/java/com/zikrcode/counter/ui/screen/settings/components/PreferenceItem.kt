@@ -16,6 +16,7 @@
 
 package com.zikrcode.counter.ui.screen.settings.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,11 +26,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +58,8 @@ fun PreferenceItem(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = null
+            contentDescription = null,
+            tint = CounterTheme.colorScheme.icon
         )
         Column(
             modifier = Modifier
@@ -67,6 +69,7 @@ fun PreferenceItem(
             Text(
                 text = name,
                 modifier = Modifier.fillMaxWidth(),
+                color = CounterTheme.colorScheme.text,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -75,6 +78,7 @@ fun PreferenceItem(
             Text(
                 text = description,
                 modifier = Modifier.fillMaxWidth(),
+                color = CounterTheme.colorScheme.text,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium
@@ -82,7 +86,15 @@ fun PreferenceItem(
         }
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors().copy(
+                checkedThumbColor = CounterTheme.colorScheme.iconLight,
+                checkedTrackColor = CounterTheme.colorScheme.main,
+                checkedBorderColor = CounterTheme.colorScheme.main,
+                uncheckedThumbColor = CounterTheme.colorScheme.icon,
+                uncheckedTrackColor = CounterTheme.colorScheme.container,
+                uncheckedBorderColor = CounterTheme.colorScheme.icon
+            )
         )
     }
 }
@@ -91,12 +103,24 @@ fun PreferenceItem(
 @Composable
 private fun PreferenceItemPreview() {
     CounterTheme {
-        Surface {
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = CounterTheme.colorScheme.background)
+
+        ) {
             PreferenceItem(
                 icon = Icons.Outlined.Settings,
                 name = "Name",
                 description = "Description",
                 checked = false,
+                onCheckedChange = { }
+            )
+            PreferenceItem(
+                icon = Icons.Outlined.Settings,
+                name = "Name",
+                description = "Description",
+                checked = true,
                 onCheckedChange = { }
             )
         }

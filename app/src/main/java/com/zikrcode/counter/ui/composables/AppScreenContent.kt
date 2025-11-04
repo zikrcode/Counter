@@ -2,6 +2,7 @@ package com.zikrcode.counter.ui.composables
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ fun AppScreenContent(
     floatingActionButton: @Composable () -> Unit = { },
     snackbarMessage: String? = null,
     onSnackbarShown: () -> Unit = { },
+    contentPadding: PaddingValues = PaddingValues(Dimens.SpacingDouble),
     content: @Composable () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -45,6 +47,7 @@ fun AppScreenContent(
     }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             Column {
                 AppTopBar(
@@ -52,23 +55,27 @@ fun AppScreenContent(
                     startIcon = topBarStartIcon,
                     endIcon = topBarEndIcon
                 )
-                HorizontalDivider()
+                HorizontalDivider(color = CounterTheme.colorScheme.divider)
             }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
-        floatingActionButton = floatingActionButton
+        floatingActionButton = floatingActionButton,
+        containerColor = CounterTheme.colorScheme.background
     ) { paddingValues ->
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(Dimens.SpacingDouble),
+                .padding(contentPadding),
             contentAlignment = Alignment.Center
         ) {
             if (loading) {
-                CircularWavyProgressIndicator()
+                CircularWavyProgressIndicator(
+                    color = CounterTheme.colorScheme.main,
+                    trackColor = CounterTheme.colorScheme.mainVariant
+                )
             } else {
                 content()
             }

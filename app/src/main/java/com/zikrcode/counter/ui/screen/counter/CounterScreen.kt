@@ -138,8 +138,9 @@ private fun CounterScreenContent(
                 Box(modifier = Modifier.weight(1f)) {
                     Text(
                         text = counter.counterDescription,
-                        maxLines = 4,
+                        color = CounterTheme.colorScheme.text,
                         overflow = TextOverflow.Ellipsis,
+                        maxLines = 4,
                         style = MaterialTheme.typography.bodyLarge
                     )
                     CircleButton(

@@ -1,6 +1,8 @@
 package com.zikrcode.counter.ui.screen.counter.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
@@ -13,10 +15,11 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -46,6 +49,10 @@ fun CounterActionButtons(
         FilledTonalButton(
             onClick = onDecrementClick,
             modifier = modifier.heightIn(largeSize),
+            colors = ButtonDefaults.filledTonalButtonColors().copy(
+                containerColor = CounterTheme.colorScheme.mainVariant,
+                contentColor = CounterTheme.colorScheme.iconDark
+            ),
             contentPadding = ButtonDefaults.contentPaddingFor(largeSize),
         ) {
             Icon(
@@ -75,6 +82,13 @@ private fun OutlinedButtonActionButton(
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.heightIn(mediumSize),
+        colors = ButtonDefaults.outlinedButtonColors().copy(
+            containerColor = Color.Transparent,
+            contentColor = CounterTheme.colorScheme.icon
+        ),
+        border = ButtonDefaults.outlinedButtonBorder(true).copy(
+            brush = SolidColor(CounterTheme.colorScheme.divider)
+        ),
         contentPadding = ButtonDefaults.contentPaddingFor(mediumSize),
     ) {
         Icon(
@@ -91,7 +105,9 @@ private fun OutlinedButtonActionButton(
 @Composable
 private fun ActionButtonsPreview() {
     CounterTheme {
-        Surface {
+        Box(
+            modifier = Modifier.background(color = CounterTheme.colorScheme.background)
+        ) {
             CounterActionButtons(
                 onResetClick = { },
                 onDecrementClick = { },
