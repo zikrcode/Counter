@@ -41,7 +41,7 @@ import com.zikrcode.counter.ui.composables.AppIconButton
 import com.zikrcode.counter.ui.composables.AppScreenContent
 import com.zikrcode.counter.ui.theme.CounterTheme
 import com.zikrcode.counter.ui.screen.counter.components.CircleButton
-import com.zikrcode.counter.ui.screen.counter.components.CounterActionButtons
+import com.zikrcode.counter.ui.screen.counter.components.ActionButtons
 import com.zikrcode.counter.ui.screen.counter.components.NoCounterAvailable
 import com.zikrcode.counter.ui.screen.settings.ChangeScreenVisibility
 
@@ -152,7 +152,7 @@ private fun CounterScreenContent(
                         }
                     )
                 }
-                CounterActionButtons(
+                ActionButtons(
                     onResetClick = {
                         onEvent.invoke(CounterEvent.Reset)
                     },

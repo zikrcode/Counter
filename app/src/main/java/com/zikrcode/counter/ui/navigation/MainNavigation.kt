@@ -74,7 +74,7 @@ fun MainNavigation(modifier: Modifier = Modifier) {
         composable<AppRoute.CounterList> {
             CounterListScreen(
                 onNavigateBack = {
-                    navController.navigateUp()
+                    navController.navigateBack()
                 },
                 onNavigateToCounter = {
                     navController.navigateToAppRoute(AppRoute.Counter)
@@ -87,7 +87,7 @@ fun MainNavigation(modifier: Modifier = Modifier) {
         composable<AppRoute.Settings> {
             SettingsScreen(
                 onNavigateBack = {
-                    navController.navigateUp()
+                    navController.navigateBack()
                 },
                 onNavigateToAbout = {
                     navController.navigateToAppRoute(AppRoute.About)
@@ -97,14 +97,14 @@ fun MainNavigation(modifier: Modifier = Modifier) {
         composable<AppRoute.About> {
             AboutScreen(
                 onNavigateBack = {
-                    navController.navigateUp()
+                    navController.navigateBack()
                 }
             )
         }
         composable<AppRoute.CounterEditor> {
             CounterEditorScreen(
                 onNavigateBack = {
-                    navController.navigateUp()
+                    navController.navigateBack()
                 }
             )
         }
@@ -117,4 +117,8 @@ private fun <T : AppRoute> NavHostController.navigateToAppRoute(route: T) {
             inclusive = true
         }
     }
+}
+
+private fun NavHostController.navigateBack() {
+    navigateUp()
 }
