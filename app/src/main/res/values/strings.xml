@@ -36,7 +36,6 @@
     <string name="save">Save</string>
     <string name="empty_counter_name">Counter name can not be empty!</string>
 
-    <string name="counter_order">Counter Order</string>
     <string name="delete_counter">Delete counter</string>
     <string name="current_counter_in_use">Current counter is in use!</string>
 

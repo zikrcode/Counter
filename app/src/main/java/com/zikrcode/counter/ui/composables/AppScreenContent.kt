@@ -54,7 +54,6 @@ fun AppScreenContent(
                     startIcon = topBarStartIcon,
                     endIcon = topBarEndIcon
                 )
-                AppHorizontalDivider()
             }
         },
         snackbarHost = {

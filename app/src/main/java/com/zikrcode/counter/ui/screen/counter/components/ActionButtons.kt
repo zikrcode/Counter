@@ -1,8 +1,6 @@
 package com.zikrcode.counter.ui.screen.counter.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
@@ -29,7 +27,7 @@ import com.zikrcode.counter.ui.utils.Dimens
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun CounterActionButtons(
+fun ActionButtons(
     onResetClick: () -> Unit,
     onDecrementClick: () -> Unit,
     onEditClick: () -> Unit,
@@ -105,14 +103,10 @@ private fun OutlinedButtonActionButton(
 @Composable
 private fun ActionButtonsPreview() {
     CounterTheme {
-        Box(
-            modifier = Modifier.background(color = CounterTheme.colorScheme.background)
-        ) {
-            CounterActionButtons(
-                onResetClick = { },
-                onDecrementClick = { },
-                onEditClick = { }
-            )
-        }
+        ActionButtons(
+            onResetClick = { },
+            onDecrementClick = { },
+            onEditClick = { }
+        )
     }
 }

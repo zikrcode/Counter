@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -125,15 +124,6 @@ private fun CounterListContent(
                 },
                 icon = Icons.AutoMirrored.Outlined.ArrowBack,
                 iconDescription = stringResource(R.string.go_back)
-            )
-        },
-        topBarEndIcon = {
-            AppIconButton(
-                onClick = {
-                    onEvent.invoke(CounterListEvent.ToggleOrderSection)
-                },
-                icon = Icons.Outlined.FilterList,
-                iconDescription = stringResource(R.string.counter_order)
             )
         },
         floatingActionButton = {
