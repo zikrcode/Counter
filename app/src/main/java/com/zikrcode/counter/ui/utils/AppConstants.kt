@@ -21,4 +21,10 @@ object AppConstants {
     const val MAX_COUNTER_VALUE_LENGTH = 7
     const val LAST_USED_COUNTER_ID_KEY = "last_used_counter_id"
     const val VIBRATION_DURATION = 10L
+
+    const val PRIVACY_POLICY_URL = "https://zikrcode-privacy-policies.web.app/projects/counter.html"
+    const val LINKEDIN_URL = "https://www.linkedin.com/in/zokirjon"
+    const val BUY_ME_A_COFFEE_URL = "https://buymeacoffee.com/zikrcode"
+    const val MAILTO = "mailto:"
+    const val EMAIL = "zikrcode@gmail.com"
 }

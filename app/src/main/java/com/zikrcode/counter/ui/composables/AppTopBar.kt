@@ -1,16 +1,14 @@
 package com.zikrcode.counter.ui.composables
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.zikrcode.counter.ui.theme.CounterTheme
 
@@ -19,20 +17,16 @@ import com.zikrcode.counter.ui.theme.CounterTheme
 fun AppTopBar(
     title: String,
     startIcon: @Composable () -> Unit,
-    endIcon: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    endIcon: (@Composable () -> Unit)? = null
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
-            Text(
-                text = title,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+            Text(text = title)
         },
         modifier = modifier,
-        navigationIcon = { startIcon() },
-        actions = { endIcon() },
+        navigationIcon = { startIcon.invoke() },
+        actions = { endIcon?.invoke() },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = CounterTheme.colorScheme.background,
             titleContentColor = CounterTheme.colorScheme.text,

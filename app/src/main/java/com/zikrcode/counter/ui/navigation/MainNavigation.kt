@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.zikrcode.counter.ui.screen.about.AboutScreen
 import com.zikrcode.counter.ui.screen.counter.CounterScreen
 import com.zikrcode.counter.ui.screen.settings.SettingsScreen
 import com.zikrcode.counter.ui.screen.counter_editor.CounterEditorScreen
@@ -39,6 +40,9 @@ sealed interface AppRoute {
 
     @Serializable
     data object Settings : AppRoute
+
+    @Serializable
+    data object About : AppRoute
 
     @Serializable
     data class CounterEditor(val counterId: Int?) : AppRoute
@@ -86,7 +90,14 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                     navController.navigateUp()
                 },
                 onNavigateToAbout = {
-                    // TODO: Implement navigation to About screen
+                    navController.navigateToAppRoute(AppRoute.About)
+                }
+            )
+        }
+        composable<AppRoute.About> {
+            AboutScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
                 }
             )
         }

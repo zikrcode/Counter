@@ -10,7 +10,6 @@ import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,8 +27,8 @@ import com.zikrcode.counter.ui.utils.Dimens
 fun AppScreenContent(
     title: String,
     topBarStartIcon: @Composable () -> Unit,
-    topBarEndIcon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    topBarEndIcon: (@Composable () -> Unit)? = null,
     loading: Boolean = false,
     floatingActionButton: @Composable () -> Unit = { },
     snackbarMessage: String? = null,
@@ -55,7 +54,7 @@ fun AppScreenContent(
                     startIcon = topBarStartIcon,
                     endIcon = topBarEndIcon
                 )
-                HorizontalDivider(color = CounterTheme.colorScheme.divider)
+                AppHorizontalDivider()
             }
         },
         snackbarHost = {

@@ -28,7 +28,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Vibration
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.counter.R
+import com.zikrcode.counter.ui.composables.AppHorizontalDivider
 import com.zikrcode.counter.ui.composables.AppIconButton
 import com.zikrcode.counter.ui.composables.AppScreenContent
 import com.zikrcode.counter.ui.theme.CounterTheme
@@ -140,7 +140,7 @@ private fun SettingsScreenContent(
                     ) {
                         onEvent.invoke(SettingsEvent.VibrateOnTapPreferenceChanged)
                     }
-                    HorizontalDivider(color = CounterTheme.colorScheme.divider)
+                    AppHorizontalDivider()
                     PreferenceItem(
                         icon = Icons.Outlined.Brightness5,
                         name = stringResource(R.string.keep_screen_on_name),
