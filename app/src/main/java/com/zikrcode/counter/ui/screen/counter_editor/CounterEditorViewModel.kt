@@ -37,7 +37,7 @@ data class CounterEditorUiState(
     val counterId: Int?,
     val counterName: String = "",
     val counterDescription: String = "",
-    val counterValue: Int = 0,
+    val counterValue: Int? = null,
     val message: UiText? = null,
     val navTarget: CounterEditorNavTarget = CounterEditorNavTarget.Idle
 )
@@ -116,7 +116,7 @@ class CounterEditorViewModel @Inject constructor(
                     counterName = _uiState.value.counterName,
                     counterDescription = _uiState.value.counterDescription,
                     counterDate = System.currentTimeMillis(),
-                    counterSavedValue = _uiState.value.counterValue
+                    counterSavedValue = _uiState.value.counterValue ?: 0
                 )
                 val counterValidationResult = counterUseCases.insertCounterUseCase(counter)
                 _uiState.update { state ->

@@ -21,7 +21,7 @@ sealed interface CounterEditorEvent {
     data object RestoreCounter : CounterEditorEvent
     data class NameChanged(val name: String) : CounterEditorEvent
     data class DescriptionChanged(val description: String) : CounterEditorEvent
-    data class ValueChanged(val value: Int) : CounterEditorEvent
+    data class ValueChanged(val value: Int?) : CounterEditorEvent
     data object Cancel : CounterEditorEvent
     data object Save : CounterEditorEvent
     data object MessageShown : CounterEditorEvent
