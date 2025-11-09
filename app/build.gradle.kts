@@ -29,6 +29,12 @@ plugins {
 
     // Kotlin Serialization
     alias(libs.plugins.jetbrains.kotlin.serialization)
+
+    // Google Services
+    alias(libs.plugins.google.services.plugin)
+
+    // Firebase Crashlytics
+    alias(libs.plugins.firebase.crashlytics.plugin)
 }
 
 //SecretPropertiesFile
@@ -125,4 +131,9 @@ dependencies {
 
     // Preferences Data Store
     implementation(libs.androidx.datastore.preferences)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }
