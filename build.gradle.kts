@@ -28,4 +28,10 @@ plugins {
 
     // Kotlin Serialization
     alias(libs.plugins.jetbrains.kotlin.serialization) apply false
+
+    // Google Services
+    alias(libs.plugins.google.services.plugin) apply false
+
+    // Firebase Crashlytics
+    alias(libs.plugins.firebase.crashlytics.plugin) apply false
 }

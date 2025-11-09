@@ -5,6 +5,9 @@ ksp = "2.2.20-2.0.3"
 hilt = "2.57.1"
 serialization = "2.2.20"
 room = "2.8.1"
+firebaseBom = "34.5.0"
+googleServices = "4.4.4"
+crashlyticsPlugin = "3.0.6"
 
 [libraries]
 
@@ -42,6 +45,11 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 # Preferences Data Store
 androidx-datastore-preferences = "androidx.datastore:datastore-preferences:1.1.7"
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -49,3 +57,5 @@ jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
+google-services-plugin = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics-plugin = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
