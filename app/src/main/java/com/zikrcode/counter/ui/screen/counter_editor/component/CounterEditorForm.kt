@@ -48,8 +48,8 @@ fun CounterEditorForm(
     onCounterNameChange: (String) -> Unit,
     counterDescription: String,
     onCounterDescriptionChange: (String) -> Unit,
-    counterValue: Int,
-    onCounterValueChange: (Int) -> Unit,
+    counterValue: Int?,
+    onCounterValueChange: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -67,11 +67,11 @@ fun CounterEditorForm(
             )
             Spacer(Modifier.width(Dimens.SpacingDouble))
             OutlinedTextField(
-                value = counterValue.toString(),
+                value = counterValue?.toString() ?: "",
                 onValueChange = { value ->
                     val counterValue = value.toIntOrNull()
-                    if (counterValue in AppConstants.COUNTER_VALUE_RANGE) {
-                        onCounterValueChange(counterValue!!)
+                    if (counterValue in AppConstants.COUNTER_VALUE_RANGE || counterValue == null) {
+                        onCounterValueChange.invoke(counterValue)
                     }
                 },
                 modifier = Modifier.width(

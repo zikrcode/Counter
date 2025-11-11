@@ -105,7 +105,7 @@ private fun CounterEditorScreenContent(
     isLoading: Boolean,
     counterId: Int?,
     counterName: String,
-    counterValue: Int,
+    counterValue: Int?,
     counterDescription: String,
     message: UiText?,
     onEvent: (CounterEditorEvent) -> Unit
