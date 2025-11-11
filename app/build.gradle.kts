@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -37,11 +35,6 @@ plugins {
     alias(libs.plugins.firebase.crashlytics.plugin)
 }
 
-//SecretPropertiesFile
-val secretPropertiesFile = project.rootProject.file("secret.properties")
-val secretProperties = Properties()
-secretProperties.load(secretPropertiesFile.inputStream())
-
 android {
     namespace = "com.zikrcode.counter"
     compileSdk = 36
@@ -59,15 +52,6 @@ android {
         }
     }
 
-    signingConfigs {
-        create("release") {
-            storeFile = file(secretProperties["storeFile"] as String)
-            storePassword = secretProperties["storePassword"] as String
-            keyPassword = secretProperties["keyPassword"] as String
-            keyAlias = secretProperties["keyAlias"] as String
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -75,7 +59,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
