@@ -55,6 +55,7 @@ class CounterEditorViewModel @Inject constructor(
 
     private val args: AppRoute.CounterEditor = savedStateHandle.toRoute()
     private var counterId: Int? = args.counterId
+    private lateinit var savedCounter: Counter
 
     private val _uiState = MutableStateFlow(
         CounterEditorUiState(counterId = counterId)
@@ -73,6 +74,8 @@ class CounterEditorViewModel @Inject constructor(
 
             viewModelScope.launch {
                 val counter = counterUseCases.counterByIdUseCase(id).first()
+                savedCounter = counter
+
                 _uiState.update { state ->
                     state.copy(
                         isLoading = false,
@@ -92,7 +95,13 @@ class CounterEditorViewModel @Inject constructor(
             }
         }
         CounterEditorEvent.RestoreCounter -> {
-            loadCounter()
+            _uiState.update { state ->
+                state.copy(
+                    counterName = savedCounter.counterName,
+                    counterDescription = savedCounter.counterDescription,
+                    counterValue = savedCounter.counterSavedValue
+                )
+            }
         }
         is CounterEditorEvent.NameChanged -> {
             _uiState.update { state ->
