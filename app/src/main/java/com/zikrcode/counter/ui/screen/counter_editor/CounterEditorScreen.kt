@@ -125,14 +125,18 @@ private fun CounterEditorScreenContent(
                 iconDescription = stringResource(R.string.go_back)
             )
         },
-        topBarEndIcon = {
-            AppIconButton(
-                onClick = {
-                    onEvent.invoke(CounterEditorEvent.RestoreCounter)
-                },
-                icon = Icons.Outlined.RestorePage,
-                iconDescription = stringResource(R.string.restore_counter)
-            )
+        topBarEndIcon = if (counterId != null) {
+            {
+                AppIconButton(
+                    onClick = {
+                        onEvent.invoke(CounterEditorEvent.RestoreCounter)
+                    },
+                    icon = Icons.Outlined.RestorePage,
+                    iconDescription = stringResource(R.string.restore_counter)
+                )
+            }
+        } else {
+            null
         },
         loading = isLoading,
         snackbarMessage = message?.asString(),
