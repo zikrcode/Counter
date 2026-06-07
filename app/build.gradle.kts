@@ -16,7 +16,6 @@
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.compose)
 
     // KSP (Kotlin Symbol Processing)
@@ -37,12 +36,12 @@ plugins {
 
 android {
     namespace = "com.zikrcode.counter"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.zikrcode.counter"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 2
         versionName = "2.0"
 
@@ -62,11 +61,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
@@ -93,7 +89,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.icons)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.expressive)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -108,7 +103,6 @@ dependencies {
 
     // Room
     implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
