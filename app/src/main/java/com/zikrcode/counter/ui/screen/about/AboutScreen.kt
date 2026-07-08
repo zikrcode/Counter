@@ -119,8 +119,6 @@ private fun AboutScreenContent(
             AppHorizontalDivider()
             DeveloperAboutItem()
             AppHorizontalDivider()
-            SupportAboutItem()
-            AppHorizontalDivider()
             FeedbackAboutItem()
         }
     }
@@ -193,26 +191,6 @@ private fun DeveloperAboutItem() {
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = CounterTheme.colorScheme.text
             )
-        )
-    }
-}
-
-@Composable
-private fun SupportAboutItem() {
-    val localUriHandler = LocalUriHandler.current
-    AboutItemContainer(label = stringResource(R.string.support)) {
-        Image(
-            painter = painterResource(R.drawable.bmc_button),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth(.5f)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = {
-                        localUriHandler.openUri(AppConstants.BUY_ME_A_COFFEE_URL)
-                    }
-                )
         )
     }
 }
