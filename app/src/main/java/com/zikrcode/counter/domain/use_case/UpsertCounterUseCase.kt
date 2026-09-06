@@ -22,18 +22,18 @@ import com.zikrcode.counter.domain.repository.CounterRepository
 import com.zikrcode.counter.domain.use_case.counter_validation.CounterValidationResult
 import com.zikrcode.counter.ui.utils.UiText
 
-class InsertCounterUseCase(
+class UpsertCounterUseCase(
     private val counterRepository: CounterRepository
 ) {
 
     suspend operator fun invoke(counter: Counter): CounterValidationResult {
-        if (counter.counterName.isBlank()) {
+        if (counter.name.isBlank()) {
             return CounterValidationResult(
                 successful = false,
                 errorMessage = UiText.StringResource(R.string.empty_counter_name)
             )
         }
-        counterRepository.insertCounter(counter)
+        counterRepository.upsertCounter(counter)
         return CounterValidationResult(successful = true)
     }
 }

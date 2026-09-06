@@ -26,6 +26,7 @@ import com.zikrcode.counter.ui.screen.settings.PreferencesKey
 import com.zikrcode.counter.ui.utils.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -42,6 +43,8 @@ data class CounterUiState(
     val navTarget: CounterNavTarget = CounterNavTarget.Idle
 )
 
+private data class CounterValueWrite(val id: Int, val value: Int)
+
 sealed interface CounterNavTarget {
     data object Settings : CounterNavTarget
     data object CounterList : CounterNavTarget
@@ -57,11 +60,27 @@ class CounterViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CounterUiState())
     val uiState = _uiState.asStateFlow()
 
-    private var saveCounterJob: Job? = null
+    /**
+     * Tap increments are written straight through rather than debounced on a timer: a timer window
+     * is a window in which taps are lost outright if the process is killed, and `onCleared` does
+     * not run in that case. The channel is conflated so that if writes ever fall behind a very fast
+     * burst, intermediate values are dropped and the newest one still lands — coalescing happens
+     * under real backpressure instead of on a fixed delay. A single consumer keeps writes ordered.
+     */
+    private val counterValueWrites = Channel<CounterValueWrite>(Channel.CONFLATED)
 
     init {
         collectCounter()
         collectPreferences()
+        consumeCounterValueWrites()
+    }
+
+    private fun consumeCounterValueWrites() {
+        viewModelScope.launch {
+            for (write in counterValueWrites) {
+                counterUseCases.updateCounterValueUseCase(write.id, write.value)
+            }
+        }
     }
 
     private fun collectCounter() {
@@ -139,14 +158,14 @@ class CounterViewModel @Inject constructor(
 
         CounterEvent.Increment -> {
             _uiState.value.counter?.let { counter ->
-                if (counter.counterSavedValue + 1 in AppConstants.COUNTER_VALUE_RANGE) {
-                    val newCounterValue = counter.counterSavedValue.plus(1)
+                if (counter.value + 1 in AppConstants.COUNTER_VALUE_RANGE) {
+                    val newCounterValue = counter.value.plus(1)
                     _uiState.update { state ->
                         state.copy(
-                            counter = state.counter?.copy(counterSavedValue = newCounterValue)
+                            counter = state.counter?.copy(value = newCounterValue)
                         )
                     }
-                    saveCounter()
+                    saveCounterValue()
                 }
             }
         }
@@ -154,22 +173,22 @@ class CounterViewModel @Inject constructor(
         CounterEvent.Reset -> {
             _uiState.update { state ->
                 state.copy(
-                    counter = state.counter?.copy(counterSavedValue = 0)
+                    counter = state.counter?.copy(value = 0)
                 )
             }
-            saveCounter()
+            saveCounterValue()
         }
 
         CounterEvent.Decrement -> {
             _uiState.value.counter?.let { counter ->
-                if (counter.counterSavedValue - 1 in AppConstants.COUNTER_VALUE_RANGE) {
-                    val newCounterValue = counter.counterSavedValue.minus(1)
+                if (counter.value - 1 in AppConstants.COUNTER_VALUE_RANGE) {
+                    val newCounterValue = counter.value.minus(1)
                     _uiState.update { state ->
                         state.copy(
-                            counter = state.counter?.copy(counterSavedValue = newCounterValue)
+                            counter = state.counter?.copy(value = newCounterValue)
                         )
                     }
-                    saveCounter()
+                    saveCounterValue()
                 }
             }
         }
@@ -187,12 +206,9 @@ class CounterViewModel @Inject constructor(
         }
     }
 
-    private fun saveCounter() {
-        saveCounterJob?.cancel()
-        saveCounterJob = viewModelScope.launch {
-            _uiState.value.counter?.let { counter ->
-                counterUseCases.insertCounterUseCase(counter)
-            }
-        }
+    private fun saveCounterValue() {
+        val counter = _uiState.value.counter ?: return
+        val id = counter.id ?: return
+        counterValueWrites.trySend(CounterValueWrite(id, counter.value))
     }
 }

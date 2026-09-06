@@ -21,11 +21,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface CounterRepository {
 
-    fun counterById(id: Int): Flow<Counter>
+    fun counterById(id: Int): Flow<Counter?>
 
     fun allCounters(): Flow<List<Counter>>
 
-    suspend fun insertCounter(counter: Counter)
+    suspend fun upsertCounter(counter: Counter)
+
+    suspend fun updateCounterValue(id: Int, value: Int)
 
     suspend fun deleteCounter(counter: Counter)
 }

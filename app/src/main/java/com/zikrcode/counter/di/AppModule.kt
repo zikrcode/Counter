@@ -23,6 +23,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.zikrcode.counter.data.data_source.CounterDatabase
+import com.zikrcode.counter.data.data_source.MIGRATION_1_2
 import com.zikrcode.counter.data.repository.CounterRepositoryImpl
 import com.zikrcode.counter.data.repository.UserPreferencesRepositoryImpl
 import com.zikrcode.counter.domain.repository.CounterRepository
@@ -31,8 +32,9 @@ import com.zikrcode.counter.domain.use_case.AllCountersUseCase
 import com.zikrcode.counter.domain.use_case.CounterByIdUseCase
 import com.zikrcode.counter.domain.use_case.CounterUseCases
 import com.zikrcode.counter.domain.use_case.DeleteCounterUseCase
-import com.zikrcode.counter.domain.use_case.InsertCounterUseCase
 import com.zikrcode.counter.domain.use_case.ReadUserPreferenceUseCase
+import com.zikrcode.counter.domain.use_case.UpdateCounterValueUseCase
+import com.zikrcode.counter.domain.use_case.UpsertCounterUseCase
 import com.zikrcode.counter.domain.use_case.WriteUserPreferenceUseCase
 import dagger.Module
 import dagger.Provides
@@ -53,7 +55,7 @@ object AppModule {
             application,
             CounterDatabase::class.java,
             CounterDatabase.DATABASE_NAME
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
     }
 
     @Provides
@@ -87,7 +89,8 @@ object AppModule {
         return CounterUseCases(
             CounterByIdUseCase(counterRepository),
             AllCountersUseCase(counterRepository),
-            InsertCounterUseCase(counterRepository),
+            UpsertCounterUseCase(counterRepository),
+            UpdateCounterValueUseCase(counterRepository),
             DeleteCounterUseCase(counterRepository),
             ReadUserPreferenceUseCase(userPreferencesRepository),
             WriteUserPreferenceUseCase(userPreferencesRepository)

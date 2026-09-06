@@ -97,16 +97,16 @@ fun CounterListItem(
                 ) {
                     Column {
                         Text(
-                            text = counter.counterName,
+                            text = counter.name,
                             color = CounterTheme.colorScheme.text,
                             fontWeight = FontWeight.Bold,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                             style = MaterialTheme.typography.headlineSmall
                         )
-                        if (counter.counterDescription.isNotBlank()) {
+                        if (counter.description.isNotBlank()) {
                             Text(
-                                text = counter.counterDescription,
+                                text = counter.description,
                                 color = CounterTheme.colorScheme.text,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 3,
@@ -116,7 +116,7 @@ fun CounterListItem(
                     }
                 }
                 Text(
-                    text = formatDate(counter.counterDate),
+                    text = formatDate(counter.updatedAt),
                     color = CounterTheme.colorScheme.text.copy(alpha = 0.7f),
                     maxLines = 1,
                     style = MaterialTheme.typography.bodySmall
@@ -135,7 +135,7 @@ fun CounterListItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = counter.counterSavedValue.toString(),
+                    text = counter.value.toString(),
                     color = CounterTheme.colorScheme.main,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -183,10 +183,10 @@ private fun CounterListItemPreview() {
             CounterListItem(
                 counter = Counter(
                     id = 1,
-                    counterName = "Very Long Counter Name That Tests Single Line Truncation Behavior",
-                    counterDescription = "",
-                    counterDate = 0L,
-                    counterSavedValue = 0
+                    name = "Very Long Counter Name That Tests Single Line Truncation Behavior",
+                    description = "",
+                    value = 0,
+                    updatedAt = 0L
                 ),
                 onClick = { },
                 onEditClick = { },
@@ -196,10 +196,10 @@ private fun CounterListItemPreview() {
             CounterListItem(
                 counter = Counter(
                     id = 0,
-                    counterName = "This is an extremely long counter name that should test text truncation and ellipsis behavior in the UI component",
-                    counterDescription = "This is an extremely long counter description that spans multiple lines and should test how the text wrapping and maximum line limits work in the UI. It contains a lot of text to ensure we can see how the component handles very long descriptions that might overflow or need to be truncated with ellipsis.",
-                    counterDate = System.currentTimeMillis(),
-                    counterSavedValue = AppConstants.COUNTER_VALUE_RANGE.last
+                    name = "This is an extremely long counter name that should test text truncation and ellipsis behavior in the UI component",
+                    description = "This is an extremely long counter description that spans multiple lines and should test how the text wrapping and maximum line limits work in the UI. It contains a lot of text to ensure we can see how the component handles very long descriptions that might overflow or need to be truncated with ellipsis.",
+                    value = AppConstants.COUNTER_VALUE_RANGE.last,
+                    updatedAt = System.currentTimeMillis()
                 ),
                 onClick = { },
                 onEditClick = { },

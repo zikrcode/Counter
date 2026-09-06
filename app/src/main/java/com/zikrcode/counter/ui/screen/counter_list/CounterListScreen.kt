@@ -98,8 +98,8 @@ private fun CounterListContentPreview() {
                 Counter.instance().copy(id = 1),
                 Counter.instance().copy(
                     id = 2,
-                    counterDescription = "",
-                    counterSavedValue = 9999999
+                    description = "",
+                    value = 9999999
                 )
             ),
             onEvent = { }

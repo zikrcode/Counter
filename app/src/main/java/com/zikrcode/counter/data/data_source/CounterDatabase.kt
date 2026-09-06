@@ -18,9 +18,14 @@ package com.zikrcode.counter.data.data_source
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.zikrcode.counter.domain.model.Counter
+import com.zikrcode.counter.data.data_source.entity.CounterDailyTotalEntity
+import com.zikrcode.counter.data.data_source.entity.CounterEntity
 
-@Database(entities = [Counter::class], version = 1)
+@Database(
+    entities = [CounterEntity::class, CounterDailyTotalEntity::class],
+    version = 2,
+    exportSchema = true
+)
 abstract class CounterDatabase : RoomDatabase() {
 
     abstract val counterDao: CounterDao

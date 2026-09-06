@@ -107,7 +107,7 @@ private fun CounterScreenContent(
 ) {
     AppScreenContent(
         loading = isLoading,
-        title = counter?.counterName ?: stringResource(R.string.counter),
+        title = counter?.name ?: stringResource(R.string.counter),
         topBarStartIcon = {
             AppIconButton(
                 onClick = {
@@ -137,7 +137,7 @@ private fun CounterScreenContent(
             } else {
                 Box(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = counter.counterDescription,
+                        text = counter.description,
                         color = CounterTheme.colorScheme.text,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 4,
@@ -146,7 +146,7 @@ private fun CounterScreenContent(
                     CircleButton(
                         modifier = Modifier.align(Alignment.Center),
                         vibrate = vibrateOnTap,
-                        currentValue = counter.counterSavedValue,
+                        currentValue = counter.value,
                         onClick = {
                             onEvent.invoke(CounterEvent.Increment)
                         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023–2025 Zokirjon Mamadjonov
+ * Copyright (C) 2023–2026 Zokirjon Mamadjonov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package com.zikrcode.counter.domain.use_case
 
-import com.zikrcode.counter.domain.model.Counter
 import com.zikrcode.counter.domain.repository.CounterRepository
-import kotlinx.coroutines.flow.Flow
 
-class CounterByIdUseCase(
+/**
+ * Writes only the saved value of a single counter. Used by the tap path, which must not rewrite
+ * the whole row on every increment.
+ */
+class UpdateCounterValueUseCase(
     private val counterRepository: CounterRepository
 ) {
 
-    operator fun invoke(id: Int): Flow<Counter?> {
-        return counterRepository.counterById(id)
+    suspend operator fun invoke(id: Int, value: Int) {
+        counterRepository.updateCounterValue(id, value)
     }
 }
