@@ -34,14 +34,14 @@ class AllCountersUseCase(
             when (counterOrder.orderType) {
                 OrderType.ASCENDING -> {
                     when (counterOrder) {
-                        is CounterOrder.Name -> counters.sortedBy { it.counterName }
-                        is CounterOrder.Date -> counters.sortedBy { it.counterDate }
+                        is CounterOrder.Name -> counters.sortedBy { it.name }
+                        is CounterOrder.Date -> counters.sortedBy { it.updatedAt }
                     }
                 }
                 OrderType.DESCENDING -> {
                     when (counterOrder) {
-                        is CounterOrder.Name -> counters.sortedByDescending { it.counterName }
-                        is CounterOrder.Date -> counters.sortedByDescending { it.counterDate }
+                        is CounterOrder.Name -> counters.sortedByDescending { it.name }
+                        is CounterOrder.Date -> counters.sortedByDescending { it.updatedAt }
                     }
                 }
             }

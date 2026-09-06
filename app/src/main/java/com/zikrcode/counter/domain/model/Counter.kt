@@ -16,20 +16,29 @@
 
 package com.zikrcode.counter.domain.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "counter")
+/**
+ * A counter as the rest of the app thinks about it.
+ *
+ * [id] is null until the counter has been saved for the first time; the storage layer maps that
+ * onto whatever it needs to auto-assign a row id.
+ */
 data class Counter(
-    @PrimaryKey val id: Int? = null,
-    @ColumnInfo(name = "counter_name") val counterName: String,
-    @ColumnInfo(name = "counter_description") val counterDescription: String,
-    @ColumnInfo(name = "counter_date") val counterDate: Long,
-    @ColumnInfo(name = "counter_saved_value") val counterSavedValue: Int
+    val id: Int? = null,
+    val name: String,
+    val description: String,
+    val value: Int,
+    val step: Int = DEFAULT_STEP,
+    val target: Int? = null,
+    val loopOnTarget: Boolean = false,
+    val rounds: Int = 0,
+    val sortIndex: Int = 0,
+    val createdAt: Long = 0L,
+    val updatedAt: Long = 0L
 ) {
     companion object {
 
-        fun instance() = Counter(counterName = "Coding", counterDescription = "Coding sessions", counterDate = System.currentTimeMillis(), counterSavedValue = 50)
+        const val DEFAULT_STEP = 1
+
+        fun instance() = Counter(name = "Coding", description = "Coding sessions", value = 50, createdAt = System.currentTimeMillis(), updatedAt = System.currentTimeMillis())
     }
 }
