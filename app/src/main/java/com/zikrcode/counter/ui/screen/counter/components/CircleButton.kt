@@ -23,13 +23,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.zikrcode.counter.ui.theme.CounterTheme
@@ -46,7 +46,7 @@ fun CircleButton(
     val context = LocalContext.current
     val vibrator = context.getSystemService(Vibrator::class.java)
 
-    ElevatedButton(
+    OutlinedButton(
         onClick = {
             if (vibrate) {
                 vibrator.vibrate(
@@ -62,19 +62,17 @@ fun CircleButton(
             onClick.invoke()
         },
         modifier = modifier.aspectRatio(1f),
-        colors = ButtonDefaults.elevatedButtonColors().copy(
-            containerColor = CounterTheme.colorScheme.background,
-            contentColor = CounterTheme.colorScheme.main,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.primary
         ),
         border = BorderStroke(
             width = Dimens.SpacingHalf,
-            color = CounterTheme.colorScheme.main
+            color = MaterialTheme.colorScheme.primary
         )
     ) {
         Text(
             text = currentValue.toString(),
             modifier = Modifier.fillMaxWidth(),
-            fontWeight = FontWeight.Light,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.displayLarge
         )
@@ -85,9 +83,11 @@ fun CircleButton(
 @Composable
 private fun CircleButtonPreview() {
     CounterTheme {
-        CircleButton(
-            currentValue = 12345,
-            onClick = { }
-        )
+        Surface {
+            CircleButton(
+                currentValue = 12345,
+                onClick = { }
+            )
+        }
     }
 }

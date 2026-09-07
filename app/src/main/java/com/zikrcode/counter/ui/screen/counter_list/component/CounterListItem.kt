@@ -31,17 +31,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,11 +69,7 @@ fun CounterListItem(
 ) {
     ElevatedCard(
         onClick = onClick,
-        modifier = modifier,
-        colors = CardDefaults.elevatedCardColors().copy(
-            containerColor = CounterTheme.colorScheme.container,
-            contentColor = Color.Unspecified,
-        )
+        modifier = modifier
     ) {
         Row(
             modifier = Modifier
@@ -98,7 +93,6 @@ fun CounterListItem(
                     Column {
                         Text(
                             text = counter.name,
-                            color = CounterTheme.colorScheme.text,
                             fontWeight = FontWeight.Bold,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
@@ -107,7 +101,6 @@ fun CounterListItem(
                         if (counter.description.isNotBlank()) {
                             Text(
                                 text = counter.description,
-                                color = CounterTheme.colorScheme.text,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 3,
                                 style = MaterialTheme.typography.bodyMedium
@@ -117,7 +110,7 @@ fun CounterListItem(
                 }
                 Text(
                     text = formatDate(counter.updatedAt),
-                    color = CounterTheme.colorScheme.text.copy(alpha = 0.7f),
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -130,13 +123,13 @@ fun CounterListItem(
                     .border(
                         width = 1.dp,
                         shape = CircleShape,
-                        color = CounterTheme.colorScheme.divider
+                        color = MaterialTheme.colorScheme.outlineVariant
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = counter.value.toString(),
-                    color = CounterTheme.colorScheme.main,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     style = MaterialTheme.typography.labelLarge
@@ -150,19 +143,14 @@ fun CounterListItem(
                 AppIconButton(
                     onClick = onEditClick,
                     icon = Icons.Outlined.Edit,
-                    iconDescription = stringResource(R.string.edit_counter),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = CounterTheme.colorScheme.background,
-                        contentColor = CounterTheme.colorScheme.icon
-                    )
+                    iconDescription = stringResource(R.string.edit_counter)
                 )
                 AppIconButton(
                     onClick = onDeleteClick,
                     icon = Icons.Outlined.Delete,
                     iconDescription = stringResource(R.string.delete_counter),
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = CounterTheme.colorScheme.background,
-                        contentColor = CounterTheme.colorScheme.red
+                        contentColor = MaterialTheme.colorScheme.error
                     )
                 )
             }
@@ -179,32 +167,34 @@ private fun formatDate(timestamp: Long): String {
 @Composable
 private fun CounterListItemPreview() {
     CounterTheme {
-        Column {
-            CounterListItem(
-                counter = Counter(
-                    id = 1,
-                    name = "Very Long Counter Name That Tests Single Line Truncation Behavior",
-                    description = "",
-                    value = 0,
-                    updatedAt = 0L
-                ),
-                onClick = { },
-                onEditClick = { },
-                onDeleteClick = { }
-            )
-            Spacer(Modifier.height(Dimens.SpacingDouble))
-            CounterListItem(
-                counter = Counter(
-                    id = 0,
-                    name = "This is an extremely long counter name that should test text truncation and ellipsis behavior in the UI component",
-                    description = "This is an extremely long counter description that spans multiple lines and should test how the text wrapping and maximum line limits work in the UI. It contains a lot of text to ensure we can see how the component handles very long descriptions that might overflow or need to be truncated with ellipsis.",
-                    value = AppConstants.COUNTER_VALUE_RANGE.last,
-                    updatedAt = System.currentTimeMillis()
-                ),
-                onClick = { },
-                onEditClick = { },
-                onDeleteClick = { }
-            )
+        Surface {
+            Column {
+                CounterListItem(
+                    counter = Counter(
+                        id = 1,
+                        name = "Very Long Counter Name That Tests Single Line Truncation Behavior",
+                        description = "",
+                        value = 0,
+                        updatedAt = 0L
+                    ),
+                    onClick = { },
+                    onEditClick = { },
+                    onDeleteClick = { }
+                )
+                Spacer(Modifier.height(Dimens.SpacingDouble))
+                CounterListItem(
+                    counter = Counter(
+                        id = 0,
+                        name = "This is an extremely long counter name that should test text truncation and ellipsis behavior in the UI component",
+                        description = "This is an extremely long counter description that spans multiple lines and should test how the text wrapping and maximum line limits work in the UI. It contains a lot of text to ensure we can see how the component handles very long descriptions that might overflow or need to be truncated with ellipsis.",
+                        value = AppConstants.COUNTER_VALUE_RANGE.last,
+                        updatedAt = System.currentTimeMillis()
+                    ),
+                    onClick = { },
+                    onEditClick = { },
+                    onDeleteClick = { }
+                )
+            }
         }
     }
 }

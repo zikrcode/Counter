@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,7 +42,6 @@ fun AboutItemContainer(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = label,
-            color = CounterTheme.colorScheme.text,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleMedium
         )
@@ -54,11 +54,13 @@ fun AboutItemContainer(
 @Composable
 private fun AboutItemContainerPreview() {
     CounterTheme {
-        AboutItemContainer(
-            label = "Label",
-            content = {
-                Box(modifier = Modifier.size(150.dp))
-            }
-        )
+        Surface {
+            AboutItemContainer(
+                label = "Label",
+                content = {
+                    Box(modifier = Modifier.size(150.dp))
+                }
+            )
+        }
     }
 }

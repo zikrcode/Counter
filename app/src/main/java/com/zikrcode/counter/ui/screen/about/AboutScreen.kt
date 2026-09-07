@@ -17,7 +17,6 @@
 package com.zikrcode.counter.ui.screen.about
 
 import android.content.Intent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -30,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +47,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import com.zikrcode.counter.ui.screen.about.component.AboutItemContainer
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -58,8 +57,8 @@ import com.zikrcode.counter.ui.composables.AppHorizontalDivider
 import com.zikrcode.counter.ui.composables.AppIconButton
 import com.zikrcode.counter.ui.composables.AppScreenContent
 import com.zikrcode.counter.ui.composables.AppVerticalSpacer
-import com.zikrcode.counter.ui.theme.CounterColor
 import com.zikrcode.counter.ui.theme.CounterTheme
+import com.zikrcode.counter.ui.theme.LocalLinkColor
 import com.zikrcode.counter.ui.utils.AppConstants
 import com.zikrcode.counter.ui.utils.Dimens
 
@@ -89,7 +88,9 @@ fun AboutScreen(
 @Composable
 private fun AboutScreenContentPreview() {
     CounterTheme {
-        AboutScreenContent { }
+        Surface {
+            AboutScreenContent { }
+        }
     }
 }
 
@@ -130,7 +131,6 @@ private fun AppInfoAboutItem() {
     AboutItemContainer(label = stringResource(R.string.app_info)) {
         Text(
             text = stringResource(R.string.app_version, appVersion),
-            color = CounterTheme.colorScheme.text,
             style = MaterialTheme.typography.bodyMedium
         )
     }
@@ -146,7 +146,7 @@ private fun PrivacyPolicyAboutItem() {
                         url = AppConstants.PRIVACY_POLICY_URL,
                         styles = TextLinkStyles(
                             style = SpanStyle(
-                                color = CounterColor.BLUE,
+                                color = LocalLinkColor.current,
                                 fontWeight = FontWeight.Bold
                             )
                         )
@@ -179,7 +179,7 @@ private fun DeveloperAboutItem() {
                         url = AppConstants.LINKEDIN_URL,
                         styles = TextLinkStyles(
                             style = SpanStyle(
-                                color = CounterColor.BLUE,
+                                color = LocalLinkColor.current,
                                 fontWeight = FontWeight.Bold
                             )
                         )
@@ -189,7 +189,7 @@ private fun DeveloperAboutItem() {
                 )
             },
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = CounterTheme.colorScheme.text
+                color = MaterialTheme.colorScheme.onSurface
             )
         )
     }
@@ -204,7 +204,6 @@ private fun FeedbackAboutItem() {
     AboutItemContainer(label = stringResource(R.string.feedback)) {
         Text(
             text = stringResource(R.string.share_feedback_description),
-            color = CounterTheme.colorScheme.text,
             style = MaterialTheme.typography.bodyMedium
         )
         AppVerticalSpacer(Dimens.SpacingSingle)
@@ -216,15 +215,10 @@ private fun FeedbackAboutItem() {
                     putExtra(Intent.EXTRA_SUBJECT, subject)
                 }
                 context.startActivity(intent)
-            },
-            border = BorderStroke(
-                width = 1.dp,
-                color = CounterTheme.colorScheme.icon
-            )
+            }
         ) {
             Text(
                 text = stringResource(R.string.share_feedback),
-                color = CounterTheme.colorScheme.main,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyMedium
             )

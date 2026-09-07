@@ -26,13 +26,12 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Brightness5
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Vibration
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -83,12 +82,14 @@ fun SettingsScreen(
 @Composable
 private fun SettingsContentPreview() {
     CounterTheme {
-        SettingsScreenContent(
-            isLoading = false,
-            vibrateOnTap = true,
-            keepScreenOn = false,
-            onEvent = { }
-        )
+        Surface {
+            SettingsScreenContent(
+                isLoading = false,
+                vibrateOnTap = true,
+                keepScreenOn = false,
+                onEvent = { }
+            )
+        }
     }
 }
 
@@ -122,12 +123,7 @@ private fun SettingsScreenContent(
         loading = isLoading
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            ElevatedCard(
-                colors = CardDefaults.elevatedCardColors().copy(
-                    containerColor = CounterTheme.colorScheme.container,
-                    contentColor = Color.Unspecified,
-                )
-            ) {
+            ElevatedCard {
                 Column(
                     modifier = Modifier.padding(Dimens.SpacingDouble),
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpacingSingle),

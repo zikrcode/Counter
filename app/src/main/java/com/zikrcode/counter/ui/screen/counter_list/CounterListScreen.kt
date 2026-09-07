@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumFloatingActionButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -90,20 +91,22 @@ fun CounterListScreen(
 @Composable
 private fun CounterListContentPreview() {
     CounterTheme {
-        CounterListContent(
-            isLoading = false,
-            message = null,
-            counters = listOf(
-                Counter.instance().copy(id = 0),
-                Counter.instance().copy(id = 1),
-                Counter.instance().copy(
-                    id = 2,
-                    description = "",
-                    value = 9999999
-                )
-            ),
-            onEvent = { }
-        )
+        Surface {
+            CounterListContent(
+                isLoading = false,
+                message = null,
+                counters = listOf(
+                    Counter.instance().copy(id = 0),
+                    Counter.instance().copy(id = 1),
+                    Counter.instance().copy(
+                        id = 2,
+                        description = "",
+                        value = 9999999
+                    )
+                ),
+                onEvent = { }
+            )
+        }
     }
 }
 
@@ -176,9 +179,7 @@ private fun NewCounterFloatingActionButton(
 ) {
     MediumFloatingActionButton(
         onClick = onClick,
-        modifier = modifier,
-        containerColor = CounterTheme.colorScheme.mainVariant,
-        contentColor = CounterTheme.colorScheme.iconDark
+        modifier = modifier
     ) {
         Icon(
             imageVector = Icons.Filled.Add,

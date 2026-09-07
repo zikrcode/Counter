@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun MainActivityContent() {
-    Surface(color = CounterTheme.colorScheme.background) {
+    Surface {
         MainNavigation()
     }
 }

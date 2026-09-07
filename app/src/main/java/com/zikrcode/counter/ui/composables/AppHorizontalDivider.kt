@@ -18,6 +18,7 @@ package com.zikrcode.counter.ui.composables
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -26,16 +27,15 @@ import com.zikrcode.counter.ui.theme.CounterTheme
 
 @Composable
 fun AppHorizontalDivider(modifier: Modifier = Modifier) {
-    HorizontalDivider(
-        modifier = modifier,
-        color = CounterTheme.colorScheme.divider
-    )
+    HorizontalDivider(modifier = modifier)
 }
 
 @PreviewLightDark
 @Composable
 private fun AppHorizontalDividerPreview() {
     CounterTheme {
-        AppHorizontalDivider(Modifier.padding(10.dp))
+        Surface {
+            AppHorizontalDivider(Modifier.padding(10.dp))
+        }
     }
 }

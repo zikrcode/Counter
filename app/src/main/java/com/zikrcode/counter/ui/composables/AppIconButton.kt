@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,15 +35,12 @@ fun AppIconButton(
     icon: ImageVector,
     iconDescription: String,
     modifier: Modifier = Modifier,
-    colors: IconButtonColors? = null
+    colors: IconButtonColors = IconButtonDefaults.iconButtonColors()
 ) {
     IconButton(
         onClick = onClick,
         modifier = modifier,
-        colors = colors ?: IconButtonDefaults.iconButtonColors(
-            containerColor = CounterTheme.colorScheme.background,
-            contentColor = CounterTheme.colorScheme.icon
-        )
+        colors = colors
     ) {
         Icon(
             imageVector = icon,
@@ -55,10 +53,12 @@ fun AppIconButton(
 @Composable
 private fun AppIconButtonPreview() {
     CounterTheme {
-        AppIconButton(
-            onClick = { },
-            icon = Icons.Outlined.Settings,
-            iconDescription = ""
-        )
+        Surface {
+            AppIconButton(
+                onClick = { },
+                icon = Icons.Outlined.Settings,
+                iconDescription = ""
+            )
+        }
     }
 }
