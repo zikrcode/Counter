@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -89,12 +90,14 @@ fun CounterScreen(
 @Composable
 private fun CounterScreenContentPreview() {
     CounterTheme {
-        CounterScreenContent(
-            isLoading = false,
-            counter = Counter.instance(),
-            vibrateOnTap = false,
-            onEvent = { }
-        )
+        Surface {
+            CounterScreenContent(
+                isLoading = false,
+                counter = Counter.instance(),
+                vibrateOnTap = false,
+                onEvent = { }
+            )
+        }
     }
 }
 
@@ -138,7 +141,6 @@ private fun CounterScreenContent(
                 Box(modifier = Modifier.weight(1f)) {
                     Text(
                         text = counter.description,
-                        color = CounterTheme.colorScheme.text,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 4,
                         style = MaterialTheme.typography.bodyLarge

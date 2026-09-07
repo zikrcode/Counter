@@ -17,8 +17,8 @@
 package com.zikrcode.counter.ui.screen.counter.components
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,12 +31,7 @@ import com.zikrcode.counter.ui.utils.Dimens
 
 @Composable
 fun NoCounterAvailable() {
-    ElevatedCard(
-        colors = CardDefaults.elevatedCardColors().copy(
-            containerColor = CounterTheme.colorScheme.container,
-            contentColor = CounterTheme.colorScheme.text,
-        )
-    ) {
+    ElevatedCard {
         Text(
             text = stringResource(R.string.no_counter_selected),
             modifier = Modifier.padding(Dimens.SpacingDouble),
@@ -49,6 +44,8 @@ fun NoCounterAvailable() {
 @Composable
 private fun NoCounterAvailablePreview() {
     CounterTheme {
-        NoCounterAvailable()
+        Surface {
+            NoCounterAvailable()
+        }
     }
 }

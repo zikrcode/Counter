@@ -19,17 +19,23 @@ package com.zikrcode.counter.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalLinkColor = staticCompositionLocalOf { CounterColor.LINK_LIGHT }
 
 @Composable
-fun CounterTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        typography = Typography,
-        content = content
-    )
-}
-
-object CounterTheme {
-    val colorScheme: CounterColorScheme
-        @Composable
-        get() = if (isSystemInDarkTheme()) DarkCounterColorScheme else LightCounterColorScheme
+fun CounterTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    CompositionLocalProvider(
+        LocalLinkColor provides if (darkTheme) CounterColor.LINK_DARK else CounterColor.LINK_LIGHT
+    ) {
+        MaterialTheme(
+            colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

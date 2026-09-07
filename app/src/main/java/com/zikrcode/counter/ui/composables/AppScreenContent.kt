@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -75,8 +76,7 @@ fun AppScreenContent(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
-        floatingActionButton = floatingActionButton,
-        containerColor = CounterTheme.colorScheme.background
+        floatingActionButton = floatingActionButton
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -86,10 +86,7 @@ fun AppScreenContent(
             contentAlignment = Alignment.Center
         ) {
             if (loading) {
-                CircularWavyProgressIndicator(
-                    color = CounterTheme.colorScheme.main,
-                    trackColor = CounterTheme.colorScheme.mainVariant
-                )
+                CircularWavyProgressIndicator()
             } else {
                 content()
             }
@@ -101,29 +98,31 @@ fun AppScreenContent(
 @Composable
 private fun AppScreenContentPreview() {
     CounterTheme {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            AppScreenContent(
-                title = "Counter",
-                topBarStartIcon = {
-                    AppIconButton(
-                        onClick = { },
-                        icon = Icons.Outlined.Settings,
-                        iconDescription = ""
-                    )
-                },
-                topBarEndIcon = {
-                    AppIconButton(
-                        onClick = { },
-                        icon = Icons.AutoMirrored.Outlined.FeaturedPlayList,
-                        iconDescription = ""
-                    )
-                },
-                loading = true,
-                content = { }
-            )
+        Surface {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                AppScreenContent(
+                    title = "Counter",
+                    topBarStartIcon = {
+                        AppIconButton(
+                            onClick = { },
+                            icon = Icons.Outlined.Settings,
+                            iconDescription = ""
+                        )
+                    },
+                    topBarEndIcon = {
+                        AppIconButton(
+                            onClick = { },
+                            icon = Icons.AutoMirrored.Outlined.FeaturedPlayList,
+                            iconDescription = ""
+                        )
+                    },
+                    loading = true,
+                    content = { }
+                )
+            }
         }
     }
 }
